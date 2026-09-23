@@ -190,6 +190,7 @@ h1{position:relative;margin:1.6rem 0 0;font-size:2.8rem;line-height:3.1rem;font-
 
 /* ===== Bottom nav ===== */
 .nav{position:fixed;left:50%;bottom:0;width:100%;max-width:42.8rem;box-sizing:border-box;transform:translateX(-50%);height:calc(8rem + env(safe-area-inset-bottom,0px));padding:0 .6rem env(safe-area-inset-bottom,0px);display:grid;grid-template-columns:repeat(5,1fr);background:rgba(10,5,5,.6);backdrop-filter:blur(2rem);-webkit-backdrop-filter:blur(2rem);border-top:max(1px,.15rem) solid rgba(255,255,255,.06);z-index:10}
+.nav.no-admin{grid-template-columns:repeat(4,1fr)}
 .nav::before{content:"";position:absolute;left:0;right:0;top:-.15rem;height:.15rem;background:linear-gradient(90deg,var(--nav-line),#CD0023 55%,var(--nav-line))}
 .item{position:relative;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:1.6rem 0 0;border:0;background:none;color:var(--nav-idle);font-size:1.4rem;font-weight:700;line-height:1.8rem;transition:color .3s var(--ease-premium)}
 .item::before{content:"";position:absolute;top:.5rem;left:50%;width:4.6rem;height:4.6rem;margin-left:-2.3rem;border-radius:50%;background:radial-gradient(circle,rgba(255,31,66,.38),transparent 72%);opacity:0;transform:scale(.7);transition:opacity .35s var(--ease-premium),transform .35s var(--ease-premium);pointer-events:none;will-change:opacity,transform}
@@ -2087,12 +2088,12 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
 </div>
 </main>
 
-<nav class="nav" aria-label="ເມນູຫຼັກ">
+<nav class="nav no-admin" aria-label="ເມນູຫຼັກ">
   <div class="nav-spot" aria-hidden="true"></div>
   <button class="item on" data-go="home" data-label="ໜ້າຫຼັກ"><span class="ring"></span><i class="spk"></i><i class="spk"></i><i class="spk"></i><i class="spk"></i><svg><use href="#i-home"/></svg>ໜ້າຫຼັກ<span class="i-bar"></span></button>
   <button class="item store" data-go="products" data-label="ສິນຄ້າ"><span class="ring"></span><i class="spk"></i><i class="spk"></i><i class="spk"></i><i class="spk"></i><svg><use href="#i-store"/></svg>ສິນຄ້າ<span class="i-bar"></span></button>
   <button class="item wallet" data-go="topup" data-label="ເຕີມເງິນ"><span class="ring"></span><i class="spk"></i><i class="spk"></i><i class="spk"></i><i class="spk"></i><svg><use href="#i-wallet"/></svg>ເຕີມເງິນ<span class="i-bar"></span></button>
-  <button class="item admin" data-go="admin" data-label="ແອດມິນ"><span class="ring"></span><i class="spk"></i><i class="spk"></i><i class="spk"></i><i class="spk"></i><svg><use href="#i-admin"/></svg>ແອດມິນ<span class="i-bar"></span></button>
+  <button class="item admin" data-go="admin" data-label="ແອດມິນ" style="display:none"><span class="ring"></span><i class="spk"></i><i class="spk"></i><i class="spk"></i><i class="spk"></i><svg><use href="#i-admin"/></svg>ແອດມິນ<span class="i-bar"></span></button>
   <button class="item menu" data-go="menu" data-label="ເມນູ"><span class="ring"></span><i class="spk"></i><i class="spk"></i><i class="spk"></i><i class="spk"></i><svg><use href="#i-menu"/></svg>ເມນູ<span class="i-bar"></span></button>
 </nav>
 <div class="toast" id="toast" role="status"></div>
@@ -2154,6 +2155,7 @@ const toast=$('#toast'); let tt;
 function say(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),1900)}
 const overlay=$('#cineOverlay');
 function show(v){
+  if(v==='admin'&&!window.__isAdmin) v='home';
   if(!$('#v-'+v)) v='home';
   const cur=$('.view.on'), target=$('#v-'+v);
   $$('.nav .item').forEach(b=>b.classList.toggle('on',b.dataset.go===v));
@@ -2893,10 +2895,6 @@ sheet.addEventListener('click',async e=>{
   const t=e.target;
   const ch=t.closest('[data-acd]'); if(ch){$('#acDays').value=ch.dataset.acd;return acSync()}
   if(t.closest('#acGen')){$('#acPass').value=genPass();return}
-  if(t.closest('#admKeyGo')){
-    const v=($('#admKey').value||'').trim(); if(!v) return;
-    ADMK=v; try{sessionStorage.setItem('dekma_admkey',v)}catch(e){}
-    closeSheet(); accLoad(); return}
   const del=t.closest('#acDel'); if(del){
     if(!del.dataset.sure){del.dataset.sure=1;del.textContent='ແຕະອີກຄັ້ງເພື່ອຢືນຢັນການລຶບ';return}
     if(await accCall('delete',{id:acEd.id})){closeSheet();say('ລຶບບັນຊີແລ້ວ')} return}
@@ -2912,7 +2910,7 @@ sheet.addEventListener('click',async e=>{
   if(raw===''&&isNew) return say('ກະລຸນາໃສ່ຈຳນວນມື້ທີ່ໃຫ້ໃຊ້ງານ (0 = ບໍ່ຈຳກັດ)');
   const n=Math.floor(+raw); if(raw!==''&&!(n>=0&&n<=3650)) return say('ຈຳນວນມື້ຕ້ອງຢູ່ລະຫວ່າງ 0 ຫາ 3650');
   sv.disabled=true;
-  const fail=r=>{say(ACC_ERR[r&&r.code]||'ບັນທຶກບໍ່ສຳເລັດ');if(r&&r.code==='key')askKey();return false};
+  const fail=r=>{say(r&&r.code==='key'?'ບໍ່ມີສິດແອດມິນ ຫຼື session ໝົດອາຍຸ':(ACC_ERR[r&&r.code]||'ບັນທຶກບໍ່ສຳເລັດ'));return false};
   try{
     let r;
     if(isNew){
@@ -2939,10 +2937,24 @@ async function rpc(fn,args){
   return r.json();
 }
 
+/* ---- ບັນຊີແອດມິນ: ສະແດງແທັບແອດມິນສະເພາະບັນຊີນີ້ (ຊື່ຕ້ອງກົງກັບ p_user ຝັ່ງ Supabase)
+   ໝາຍເຫດ: ນີ້ເປັນການເຊື່ອງໜ້າຈໍໃນເຄື່ອງລູກຄ້າເທົ່ານັ້ນ (UX) — ຄວາມປອດໄພຈິງຕ້ອງກວດຝັ່ງເຊີບເວີ
+   ໃນຟັງຊັນ dk_admin_call ວ່າ token ນີ້ແມ່ນບັນຊີ BeertJ ແທ້ (ເບິ່ງໝາຍເຫດໃນ dk_accounts.sql) */
+const ADMIN_USER='BeertJ';
+window.__isAdmin=false;
+function applyAdminVisibility(user){
+  const isAdmin = user===ADMIN_USER;
+  window.__isAdmin = isAdmin;
+  const btn=$('.item.admin'), nav=$('.nav');
+  if(btn) btn.style.display = isAdmin?'':'none';
+  if(nav) nav.classList.toggle('no-admin', !isAdmin);
+  if(!isAdmin && $('#v-admin')?.classList.contains('on')) show('home');
+}
 /* ---- Session ຂອງລູກຄ້າ: token ຢູ່ localStorage (ບໍ່ຫຼຸດເອງ) · ຍິງ heartbeat ທຸກ 30 ວິ ---- */
 let authExp=0, authOff=0, authChk=0;
 function authKick(code){
   try{localStorage.removeItem('dekma_token');localStorage.removeItem('dekma_user')}catch(e){}
+  applyAdminVisibility(null);
   location.replace('login.html?r='+encodeURIComponent(code||'none'));
 }
 async function authCheck(){
@@ -2950,7 +2962,7 @@ async function authCheck(){
   if(!tk) return authKick('none');
   try{
     const r=await rpc('dk_check',{p_token:tk});
-    if(r&&r.ok){authExp=r.exp||0;authOff=r.now-Date.now();const un=$('#uname');if(un)un.textContent=r.user;try{localStorage.setItem('dekma_user',r.user)}catch(e){}renderMyAccount();loadHomeStats();return}
+    if(r&&r.ok){authExp=r.exp||0;authOff=r.now-Date.now();const un=$('#uname');if(un)un.textContent=r.user;try{localStorage.setItem('dekma_user',r.user)}catch(e){}applyAdminVisibility(r.user);renderMyAccount();loadHomeStats();return}
     if(r&&r.code) authKick(r.code); /* ເຕະອອກສະເພາະເມື່ອເຊີບເວີບອກຊັດເຈນ */
   }catch(e){
     /* ເນັດຫຼຸດ/ເຊີບເວີຊ້າ = ຫ້າມເຕະອອກ · ຍົກເວັ້ນ offline ຫຼັງໝົດເວລາແລ້ວ >60 ວິ */
@@ -2996,34 +3008,29 @@ authCheck();
 
 /* ---- ແອດມິນ: ຈັດການບັນຊີ (ຕ້ອງໃສ່ລະຫັດແອດມິນ) ---- */
 const ACC_ERR={key:'ລະຫັດແອດມິນບໍ່ຖືກຕ້ອງ',user:'ຊື່ບັນຊີບໍ່ຖືກຕ້ອງ',pass:'ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 4 ຕົວ',days:'ຈຳນວນມື້ບໍ່ຖືກຕ້ອງ',dup:'ຊື່ບັນຊີນີ້ມີແລ້ວ',nf:'ບໍ່ພົບບັນຊີນີ້'};
-let ADMK=''; try{ADMK=sessionStorage.getItem('dekma_admkey')||''}catch(e){}
+/* ADMK (ລະຫັດແອດມິນກາງ) ຖືກຖອດອອກແລ້ວ: ການຈັດການບັນຊີລູກຄ້າຕອນນີ້ໃຊ້ token ຂອງບັນຊີທີ່ login ຢູ່ແລ້ວ
+   (localStorage.dekma_token) ສົ່ງໄປໃຫ້ dk_admin_call ເຊິ່ງເຊີບເວີເປັນຄົນກວດວ່າ token ນັ້ນແມ່ນບັນຊີ
+   role='admin' ແທ້ — ບໍ່ມີໃຜອ້າງສິດແອດມິນໄດ້ດ້ວຍລະຫັດກາງອີກຕໍ່ໄປ */
 if(DB.accounts&&DB.accounts.length&&!DB.accountsOld) DB.accountsOld=DB.accounts; /* ບັນຊີເກົ່າໃນເຄື່ອງ (ໃຊ້ບໍ່ໄດ້ແລ້ວ) ເກັບສຳຮອງໄວ້ */
 DB.accounts=[];
+function admToken(){ try{return localStorage.getItem('dekma_token')||''}catch(e){return ''} }
 async function adm(action,p){
-  const r=await rpc('dk_admin_call',{p_key:ADMK,p_action:action,p:p||{}});
-  if(r&&r.code==='key'){ADMK='';try{sessionStorage.removeItem('dekma_admkey')}catch(e){}}
-  return r;
+  const tk=admToken();
+  if(!tk) return {ok:false,code:'key'};
+  return await rpc('dk_admin_call',{p_token:tk,p_action:action,p:p||{}});
 }
-function askKey(){
-  openSheet(`<h3 class="sh-t">ລະຫັດແອດມິນ</h3>
-  <p class="hint first">ໃສ່ລະຫັດແອດມິນເພື່ອຈັດການບັນຊີລູກຄ້າ (ຈື່ໄວ້ຈົນກວ່າຈະປິດແອັບ)</p>
-  <input class="field" id="admKey" type="password" placeholder="ລະຫັດແອດມິນ" autocomplete="off" autocapitalize="off" spellcheck="false">
-  <button class="btn b2 wide sp" id="admKeyGo" type="button">ຢືນຢັນ</button><button class="btn b3 wide" data-close style="margin-top:.9rem" type="button">ຍົກເລີກ</button>`);
-  setTimeout(()=>{const i=$('#admKey');if(i)i.focus()},60);
-}
-sheet.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='admKey'){e.preventDefault();$('#admKeyGo').click()}});
 function mapAcc(x,off){ /* ແປງເວລາເຊີບເວີ → ເວລາໃນເຄື່ອງນີ້ (ກັນນາຬິກາເຄື່ອງເລື່ອນ) */
   return {id:x.id,user:x.user,created:x.created-off,dur:x.dur||0,pending:!x.first&&x.dur>0,online:!!x.online,
     exp:x.exp?x.exp-off:0,start:(x.first||x.created)-off,off:!!x.off,left:x.left||0,total:Math.max(1,x.dur||1)};
 }
 let accSeq=0;
 async function accLoad(quiet){
-  if(!ADMK){if(!quiet)askKey();return}
+  if(!admToken()){if(!quiet)say('ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່');return}
   const my=++accSeq;
   try{
     const r=await adm('list');
     if(my!==accSeq) return;
-    if(!r||!r.ok){ if(r&&r.code==='key'){if(!quiet){say(ACC_ERR.key);askKey()}} else if(!quiet) say('ໂຫຼດບັນຊີບໍ່ໄດ້'); return }
+    if(!r||!r.ok){ if(!quiet) say(r&&r.code==='key'?'ບໍ່ມີສິດແອດມິນ ຫຼື session ໝົດອາຍຸ ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່':'ໂຫຼດບັນຊີບໍ່ໄດ້'); return }
     const off=r.now-Date.now();
     DB.accounts=r.items.map(x=>mapAcc(x,off));
     renderAcc();
@@ -3032,14 +3039,14 @@ async function accLoad(quiet){
 async function accCall(action,p,okMsg){
   try{
     const r=await adm(action,p);
-    if(!r||!r.ok){say(ACC_ERR[r&&r.code]||'ບໍ່ສຳເລັດ');if(r&&r.code==='key')askKey();return false}
+    if(!r||!r.ok){say(r&&r.code==='key'?'ບໍ່ມີສິດແອດມິນ ຫຼື session ໝົດອາຍຸ':(ACC_ERR[r&&r.code]||'ບໍ່ສຳເລັດ'));return false}
     await accLoad(true); if(okMsg) say(okMsg); return true;
   }catch(e){say('ເຊື່ອມຕໍ່ບໍ່ໄດ້ ກະລຸນາລອງໃໝ່');return false}
 }
 /* ຣີເຟຣຊລາຍການທຸກ 10 ວິ ຕອນເປີດແທັບບັນຊີ (ເຫັນທັນທີວ່າໃຜເຂົ້າ/ອອກ) */
 setInterval(()=>{
   const pane=$('#ap-accounts');
-  if(!ADMK||!pane||!pane.classList.contains('on')||!pane.offsetParent||document.hidden) return;
+  if(!admToken()||!pane||!pane.classList.contains('on')||!pane.offsetParent||document.hidden) return;
   if(sheet.classList.contains('on')||pane.querySelector('[data-sure]')) return;
   accLoad(true);
 },10000);
