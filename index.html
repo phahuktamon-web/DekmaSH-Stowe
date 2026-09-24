@@ -327,9 +327,9 @@ body.transitioning .pm,body.transitioning .nav,body.transitioning .sh-box{
 .cat:active{transform:scale(.96)}
 .cat.on,.cat[aria-pressed=true]{background:linear-gradient(90deg,var(--b2-a),var(--b2-b));border-color:var(--b2-bd);color:#fff;box-shadow:0 0 1.6rem rgba(255,31,66,.3)}
 /* แผ่นไฟเลื่อน (เหมือนแท็บแอดมิน) เฉพาะแถวหมวดหมู่สินค้า #cats — เลือกหมวดแล้วไถลลื่นไปแทนการกระพริบเปลี่ยนสี */
-#cats .cat-ind{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:99rem;z-index:0;pointer-events:none;
+#cats .cat-ind{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:99rem;z-index:0;pointer-events:none;will-change:transform,width;
   background:linear-gradient(90deg,var(--b2-a),var(--b2-b));box-shadow:0 0 1.6rem rgba(255,31,66,.3),inset 0 .1rem 0 rgba(255,255,255,.25);
-  transition:transform .5s var(--ease-premium),width .5s var(--ease-premium)}
+  transition:transform .45s cubic-bezier(.16,1,.3,1),width .45s cubic-bezier(.16,1,.3,1)}
 #cats .cat.on{background:transparent;border-color:transparent;box-shadow:none}
 @media (prefers-reduced-motion:reduce){#cats .cat-ind{transition:none}}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
@@ -529,6 +529,7 @@ select.field{padding-right:4rem;background-image:url("data:image/svg+xml;utf8,<s
 .ad-tab{position:relative;z-index:1;display:flex;align-items:center;gap:.7rem;height:4.2rem;padding:0 1.5rem;border:0;border-radius:1.8rem;background:none;color:var(--nav-idle);font-size:1.4rem;font-weight:600;white-space:nowrap;transition:color .3s}
 .ad-tab svg{width:1.9rem;height:1.9rem;transition:transform .45s var(--ease-premium)}
 .ad-tab.on{color:#fff;--slit:#a1001c}
+.tp-badge{display:inline-flex;align-items:center;justify-content:center;min-width:1.9rem;height:1.9rem;padding:0 .5rem;border-radius:99rem;background:var(--red-bright);color:#fff;font-size:1.1rem;font-weight:800;line-height:1}
 .ad-tab.on svg{transform:scale(1.14) rotate(-6deg)}
 
 /* alert */
@@ -798,6 +799,22 @@ button.bdg:active{transform:scale(.94)}button.bdg:hover{filter:brightness(1.2)}
 /* =====================================================================
    ເຕີມເງິນ · ໜ້າຕ່າງສະແກນຈ່າຍ + ແນບສະລິບ (ໃຊ້ໂຄງລະບົບ .om ເດີມ — ไม่แตะ style เดิม)
    ===================================================================== */
+.tu-wait-ic{width:8rem;height:8rem;margin:0 auto 1.6rem;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);border:.2rem solid var(--card-border);color:var(--accent)}
+.tu-wait-ic svg{width:3.4rem;height:3.4rem;fill:none;stroke:currentColor;stroke-width:2;animation:tuPulse 1.6s ease-in-out infinite}
+.tu-wait-bad{color:#f87171;background:rgba(248,113,113,.12)}
+.tu-wait-bad svg{animation:none}
+@keyframes tuPulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.1);opacity:1}}
+.tp-item{display:flex;flex-direction:column;gap:1rem;padding:1.4rem 0;border-bottom:1px solid var(--glass-line)}
+.tp-item:last-child{border-bottom:0}
+.tp-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.tp-row b{font-size:1.6rem}
+.tp-row small{color:var(--muted);font-size:1.2rem}
+.tp-slip{width:100%;max-height:34rem;border-radius:1.4rem;object-fit:contain;background:#000;cursor:zoom-in}
+.tp-btns{display:flex;gap:1rem}
+.tp-btns button{flex:1;height:4.4rem;border-radius:1.4rem;border:0;font-weight:700;font-size:1.4rem}
+.tp-ok{background:linear-gradient(90deg,#22c55e,#4ade80);color:#04170a}
+.tp-no{background:rgba(248,113,113,.14);border:1px solid rgba(248,113,113,.4)!important;color:#fca5a5}
+.tp-item.busy{opacity:.5;pointer-events:none}
 .tu-modal-qr{display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .tu-modal-qr .tu-qr-box{width:15rem;height:15rem}
 .tu-modal-qr p{color:var(--om-mute);font-size:1.25rem;line-height:1.9rem;text-align:center;max-width:30rem}
@@ -1882,6 +1899,7 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
     <button class="ad-tab" role="tab" aria-selected="false" data-tab="products"><svg><use href="#i-store"/></svg><span>ສິນຄ້າ</span></button>
     <button class="ad-tab" role="tab" aria-selected="false" data-tab="restock"><svg><use href="#i-boxes"/></svg><span>ເຕີມສະຕັອກ</span></button>
     <button class="ad-tab" role="tab" aria-selected="false" data-tab="accounts"><svg><use href="#i-users"/></svg><span>ບັນຊີ</span></button>
+    <button class="ad-tab" role="tab" aria-selected="false" data-tab="topups"><svg><use href="#i-wallet"/></svg><span>ຄຳຂໍເຕີມເງິນ</span><i class="tp-badge" id="tpBadge" hidden>0</i></button>
     <button class="ad-tab" role="tab" aria-selected="false" data-tab="shop"><svg><use href="#i-admin"/></svg><span>ຊື່ຮ້ານ</span></button>
   </div></div>
 
@@ -2089,6 +2107,12 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
       <p class="hint">ການກູ້ຄືນຈະແທນທີ່ຂໍ້ມູນປັດຈຸບັນທັງໝົດ.</p></div>
     <div class="card ad-legacy"><p class="sec-t" style="margin-bottom:.6rem">ບ່ອນເກັບຂໍ້ມູນ</p><p class="note" style="padding:0">ຂໍ້ມູນສິນຄ້າ, ສະຕັອກ, ເຄຣດິດ ແລະປະຫວັດ ເກັບໃນບຼາວເຊີຂອງເຄື່ອງນີ້ເທົ່ານັ້ນ (ຍັງບໍ່ໄດ້ເຊື່ອມຕໍ່ຖານຂໍ້ມູນກາງ). ຖ້າລ້າງຂໍ້ມູນບຼາວເຊີ ຫຼືເປີດໃນເຄື່ອງ/ບຼາວເຊີອື່ນ (ເຊັ່ນ ເປີດຈາກ Instagram ແລ້ວມາເປີດໃນ Safari) ຈະເຫັນຂໍ້ມູນບໍ່ຕົງກັນ. ຄວນເຕີມຂອງຈາກເຄື່ອງ ແລະບຼາວເຊີດຽວກັນສະເໝີ ແລະສຳຮອງຂໍ້ມູນເປັນໄລຍະ.</p></div>
   </section>
+
+  <!-- ===== ແຖບ: ຄຳຂໍເຕີມເງິນ (ອະນຸມັດ/ປະຕິເສດ ຈາກສະລິບທີ່ລູກຄ້າແນບ) ===== -->
+  <section class="ad-pane" id="ap-topups" role="tabpanel">
+    <div class="ad-help"><span class="ad-i">i</span><div><b>ແຖບນີ້ໃຊ້ເຮັດຫຍັງ</b><p>ກວດສະລິບທີ່ລູກຄ້າແນບຕອນເຕີມເງິນ ແລ້ວກົດ "ອະນຸມັດ" ເພື່ອເຄຣດິດເຂົ້າບັນຊີລູກຄ້າທັນທີ ຫຼື "ປະຕິເສດ" ຖ້າສະລິບບໍ່ຖືກຕ້ອງ.</p></div></div>
+    <div class="card"><p class="hint" id="tpCount" style="margin:0 0 1.2rem">ກຳລັງໂຫຼດ...</p><div id="tpList"></div></div>
+  </section>
 </div>
 </main>
 </div>
@@ -2169,9 +2193,14 @@ function show(v){
   const idx=$$('.nav .item').findIndex(b=>b.dataset.go===v);
   if(idx>-1) $('.nav').style.setProperty('--idx',idx);
   try{history.replaceState(null,'',v==='home'?location.pathname:'#'+v)}catch(e){}
+  /* renderCats()/posCatInd() ที่ถูกเรียกตอนสลับ view มักรันขณะ #v-products ยังซ่อนอยู่ (display:none)
+     ทำให้ offsetWidth ของปุ่มที่เลือก = 0 → posCatInd() คำนวณไม่ได้ แผ่นไฟเลยไม่โผล่จนกว่าจะกดเอง
+     แก้โดยสั่งคำนวณตำแหน่งซ้ำอีกครั้งหลัง view โผล่จริงแล้ว (รอ 1 เฟรมให้ layout commit ก่อน) */
+  const fixCatInd=()=>{ if(v==='products'&&typeof posCatInd==='function') requestAnimationFrame(posCatInd); };
   if(!cur||cur===target||document.body.classList.contains('transitioning')){
     $$('.view').forEach(e=>e.classList.toggle('on',e===target));
     scrollTopReset();
+    fixCatInd();
     return;
   }
   const back=v==='home'; /* home = back (slide left), any other tab = forward (slide right) */
@@ -2180,6 +2209,7 @@ function show(v){
   scrollTopReset();
   cur.classList.remove('on'); cur.classList.add('leaving',dirClass);
   target.classList.add('on','entering',dirClass);
+  fixCatInd();
   setTimeout(()=>{
     cur.classList.remove('leaving','dir-fwd','dir-back');
     target.classList.remove('entering','dir-fwd','dir-back');
@@ -2405,7 +2435,8 @@ function setTab(t){adTab=t;
   $$('.ad-tab').forEach(b=>{const on=b.dataset.tab===t;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});
   $$('.ad-pane').forEach(x=>x.classList.toggle('on',x.id==='ap-'+t));
   $('#adAlert').classList.toggle('mute',t==='restock');
-  posInd();replay($('#ap-'+t));if(t==='accounts'&&typeof accLoad==='function')accLoad()}
+  posInd();replay($('#ap-'+t));if(t==='accounts'&&typeof accLoad==='function')accLoad();
+  if(t==='topups'&&typeof topupsLoad==='function')topupsLoad()}
 
 /* ---- restock ---- */
 /* ค่าไลยะเวลาที่เลือกอยู่ตอนนี้: '' = ไม่มีไลยะ, '__new__' = กำลังตั้งไลยะใหม่ (ยังไม่ยืนยัน), หรือ label ของไลยะเดิม */
@@ -2973,6 +3004,7 @@ function applyAdminVisibility(user){
   if(btn) btn.style.display = isAdmin?'':'none';
   if(nav) nav.classList.toggle('no-admin', !isAdmin);
   if(!isAdmin && $('#v-admin')?.classList.contains('on')) show('home');
+  if(isAdmin&&typeof tpBadgeRefresh==='function') tpBadgeRefresh();
 }
 /* ---- Session ຂອງລູກຄ້າ: token ຢູ່ localStorage (ບໍ່ຫຼຸດເອງ) · ຍິງ heartbeat ທຸກ 30 ວິ ---- */
 let authExp=0, authOff=0, authChk=0;
@@ -3038,6 +3070,42 @@ const ACC_ERR={key:'ລະຫັດແອດມິນບໍ່ຖືກຕ້ອ
 if(DB.accounts&&DB.accounts.length&&!DB.accountsOld) DB.accountsOld=DB.accounts; /* ບັນຊີເກົ່າໃນເຄື່ອງ (ໃຊ້ບໍ່ໄດ້ແລ້ວ) ເກັບສຳຮອງໄວ້ */
 DB.accounts=[];
 function admToken(){ try{return localStorage.getItem('dekma_token')||''}catch(e){return ''} }
+/* ---- ແອດມິນ: ຄຳຂໍເຕີມເງິນ (ອະນຸມັດ/ປະຕິເສດ ຈາກສະລິບ) ---- */
+async function tpBadgeRefresh(){
+  if(!window.__isAdmin) return;
+  let r=null; try{r=await adm('topups_list',{status:'pending'})}catch(e){}
+  const n=(r&&r.ok&&r.items)?r.items.length:0;
+  const b=$('#tpBadge'); if(b){b.hidden=!n;b.textContent=n>99?'99+':n}
+}
+function tpRow(t){
+  return `<div class="tp-item" data-id="${t.id}">
+    <div class="tp-row"><b>${esc(t.account)}</b><small>${new Date(t.created).toLocaleString('en-GB')}</small></div>
+    <div class="tp-row"><span>${K(t.amount)}</span><small>${esc(t.method||'-')}</small></div>
+    ${t.proof_url?`<img class="tp-slip" src="${esc(t.proof_url)}" alt="ສະລິບ" onclick="window.open(this.src,'_blank')">`:'<p class="hint">ບໍ່ມີສະລິບແນບມາ</p>'}
+    <div class="tp-btns"><button class="tp-ok" data-act="approve">ອະນຸມັດ</button><button class="tp-no" data-act="reject">ປະຕິເສດ</button></div>
+  </div>`;
+}
+async function topupsLoad(){
+  const list=$('#tpList'),count=$('#tpCount'); if(!list) return;
+  count.textContent='ກຳລັງໂຫຼດ...';
+  let r=null; try{r=await adm('topups_list',{status:'pending'})}catch(e){}
+  if(!r||!r.ok){count.textContent='ໂຫຼດບໍ່ໄດ້ ລອງໃໝ່';list.innerHTML='';return}
+  const items=r.items||[];
+  count.textContent=items.length?`ລໍຖ້າອະນຸມັດ ${items.length} ລາຍການ`:'ບໍ່ມີຄຳຂໍເຕີມເງິນຄ້າງໄວ້';
+  list.innerHTML=items.map(tpRow).join('');
+  tpBadgeRefresh();
+}
+$('#ap-topups')?.addEventListener('click',async e=>{
+  const b=e.target.closest('button[data-act]'); if(!b) return;
+  const item=b.closest('.tp-item'), id=item?.dataset.id; if(!id) return;
+  const approve=b.dataset.act==='approve';
+  item.classList.add('busy');
+  let r=null; try{r=await rpc('dk_admin_approve_topup',{p_admin_token:admToken(),p_request_id:id,p_approve:approve})}catch(e){}
+  if(r&&r.ok){ say(approve?'ອະນຸມັດແລ້ວ ເຄຣດິດເຂົ້າບັນຊີລູກຄ້າແລ້ວ':'ປະຕິເສດຄຳຂໍນີ້ແລ້ວ'); topupsLoad() }
+  else { item.classList.remove('busy'); say('ດຳເນີນການບໍ່ສຳເລັດ ລອງໃໝ່ອີກຄັ້ງ') }
+});
+setInterval(tpBadgeRefresh,20000);
+
 async function adm(action,p){
   const tk=admToken();
   if(!tk) return {ok:false,code:'key'};
@@ -3482,6 +3550,7 @@ function tuConfetti(){
 /* ---- ເປີດ / ປິດ ---- */
 function tuOpen(){
   if(tu.open||amt<=0) return;
+  clearInterval(tuPoll);
   Object.assign(tu,{open:true,busy:false,slip:null});
   tuEl.dataset.st='review'; tuX.disabled=false; tuCard.classList.remove('swap','shake');
   tuReview(); tuScroll.scrollTop=0;
@@ -3493,6 +3562,7 @@ function tuOpen(){
 }
 function tuClose(){
   if(!tu.open||tu.busy) return;
+  clearInterval(tuPoll);
   tu.open=false; tuEl.classList.add('closing');
   setTimeout(()=>{
     tuEl.classList.remove('on','show','closing');
@@ -3512,23 +3582,90 @@ async function tuPickFile(f){
   tuSetSlip(d);
 }
 
-/* ---- ກົດຢືນຢັນ → Loading (ແຖບສະແກນ) → ບັນທຶກເຄຣດິດຈິງເຂົ້າ DB → ສຳເລັດ ---- */
+/* ---- ອັບໂຫຼດຮູບສະລິບ (data URL) ຂຶ້ນ Supabase Storage ແລ້ວສົ່ງກັບເປັນ URL ສາທາລະນະ ---- */
+async function tuUploadSlip(dataUrl){
+  const m=/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/.exec(dataUrl||'');
+  if(!m) throw new Error('bad_image');
+  const mime=m[1], bin=atob(m[2]), bytes=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+  const ext=(mime.split('/')[1]||'jpg').replace('jpeg','jpg');
+  const name='slip-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;
+  const r=await fetch(SB_URL+'/storage/v1/object/topup-slips/'+name,{
+    method:'POST',
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':mime,'x-upsert':'true'},
+    body:bytes
+  });
+  if(!r.ok) throw new Error('upload_failed');
+  return SB_URL+'/storage/v1/object/public/topup-slips/'+name;
+}
+
+/* ---- ກົດຢືນຢັນ → ອັບໂຫຼດສະລິບ + ສົ່ງຄຳຂໍຈິງເຂົ້າ Supabase → ໜ້າລໍຖ້າແອດມິນ ---- */
 async function tuRun(btn){
   if(tu.busy||!tu.open) return;
   if(!tu.slip) return say('ກະລຸນາແນບສະລິບການໂອນເງິນກ່ອນ');
   tu.busy=true; tuX.disabled=true;
   btn.disabled=true; btn.classList.add('is-load'); btn.setAttribute('aria-busy','true');
-  btn.innerHTML=OM_SPIN+'<span>ກຳລັງກວດສອບສະລິບ…</span>';
+  btn.innerHTML=OM_SPIN+'<span>ກຳລັງອັບໂຫຼດສະລິບ…</span>';
   tuCard.classList.add('om-busy'); tuCard.focus({preventScroll:true});
-  await omSleep(1100);
+  let reqId=null;
+  try{
+    const proofUrl=await tuUploadSlip(tu.slip);
+    const r=await rpc('dk_topup_request',{p_token:admToken(),p_amount:amt,p_method:pm,p_proof_url:proofUrl});
+    if(!r||!r.ok) throw new Error(r&&r.code||'err');
+    reqId=r.request_id;
+  }catch(e){
+    tuCard.classList.remove('om-busy');
+    btn.disabled=false; btn.classList.remove('is-load'); btn.removeAttribute('aria-busy');
+    btn.innerHTML=OM_TICK+'<span>ຢືນຢັນການເຕີມເງິນ</span>';
+    tu.busy=false; tuX.disabled=false;
+    return say('ສົ່ງຄຳຂໍບໍ່ສຳເລັດ ກະລຸນາລອງໃໝ່ອີກຄັ້ງ');
+  }
+  await omSleep(300);
   tuCard.classList.add('swap'); await omSleep(180);
   tuScroll.scrollTop=0; tuCard.classList.remove('om-busy');
-  DB.credit+=amt; addTx('add',amt,'ເຕີມເງິນຜ່ານ '+pm+' (ແນບສະລິບ)'); save(); paint();
-  const hist=$('#hist'); if(hist) hist.insertAdjacentHTML('afterbegin',feedRow('in','ເຕີມເງິນຜ່ານ '+esc(pmShort(pm))+' (ແນບສະລິບ)','ຫາກໍ່ນີ້','+'+K(amt)));
-  tuEl.dataset.st='success'; tu.done=true; tuSuccess();
+  tuEl.dataset.st='wait'; tuWaiting(reqId);
   tuCard.classList.remove('swap');
   tu.busy=false; tuX.disabled=false;
-  const f=$('#tuDone'); if(f) f.focus({preventScroll:true});
+}
+
+/* ---- ໜ້າລໍຖ້າແອດມິນຢືນຢັນ: poll ສະຖານະທຸກ 2.5 ວິ ---- */
+let tuPoll=null;
+function tuWaiting(reqId){
+  tuFoot.className='om-foot';
+  tuScroll.innerHTML=`
+    <div class="om-res" role="status">
+      <div class="tu-wait-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-wallet"/></svg></div>
+      <h2 class="om-title om-in" id="tuT" style="--i:0">ລໍຖ້າແອດມິນຢືນຢັນ</h2>
+      <p class="om-sub om-in" style="--i:1">ອັບໂຫຼດສະລິບແລ້ວ ກຳລັງກວດສອບ...</p>
+      <span class="om-oid om-in" style="--i:2">${K(amt)}</span>
+      <p class="om-line om-in" style="--i:3">ຜ່ານ ${esc(pmShort(pm))} · ປົກກະຕິໃຊ້ເວລາບໍ່ເກີນ 2-3 ນາທີ</p>
+    </div>`;
+  tuFoot.innerHTML='';
+  clearInterval(tuPoll);
+  if(!reqId) return;
+  tuPoll=setInterval(async()=>{
+    let r=null; try{r=await rpc('dk_topup_status',{p_token:admToken(),p_request_id:reqId})}catch(e){return}
+    if(!r||!r.ok) return;
+    if(r.status==='approved'){
+      clearInterval(tuPoll); DB.credit=r.credit; save(); paint();
+      addTx('add',amt,'ເຕີມເງິນຜ່ານ '+pm+' (ແນບສະລິບ)');
+      const hist=$('#hist'); if(hist) hist.insertAdjacentHTML('afterbegin',feedRow('in','ເຕີມເງິນຜ່ານ '+esc(pmShort(pm))+' (ແນບສະລິບ)','ຫາກໍ່ນີ້','+'+K(amt)));
+      tuEl.dataset.st='success'; tu.done=true; tuSuccess();
+      const f=$('#tuDone'); if(f) f.focus({preventScroll:true});
+    }else if(r.status==='rejected'){
+      clearInterval(tuPoll); tuEl.dataset.st='rejected'; tuRejected();
+    }
+  },2500);
+}
+function tuRejected(){
+  tuFoot.className='om-foot';
+  tuScroll.innerHTML=`
+    <div class="om-res" role="status">
+      <div class="tu-wait-ic tu-wait-bad" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+      <h2 class="om-title rs" id="tuT" style="--i:0">ບໍ່ອະນຸມັດການເຕີມເງິນ</h2>
+      <p class="om-sub rs" style="--i:1">ສະລິບ ຫຼືຂໍ້ມູນການໂອນເງິນບໍ່ຖືກຕ້ອງ ກະລຸນາຕິດຕໍ່ແອດມິນ ຫຼືລອງໃໝ່ອີກຄັ້ງ</p>
+    </div>`;
+  tuFoot.innerHTML=`<div class="rs" style="--i:3"><button class="om-cta" type="button" data-tuclose>${OM_TICK}<span>ປິດ</span></button></div>`;
 }
 
 tuEl.addEventListener('click',e=>{
