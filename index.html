@@ -799,11 +799,29 @@ button.bdg:active{transform:scale(.94)}button.bdg:hover{filter:brightness(1.2)}
 /* =====================================================================
    ເຕີມເງິນ · ໜ້າຕ່າງສະແກນຈ່າຍ + ແນບສະລິບ (ໃຊ້ໂຄງລະບົບ .om ເດີມ — ไม่แตะ style เดิม)
    ===================================================================== */
-.tu-wait-ic{width:8rem;height:8rem;margin:0 auto 1.6rem;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);border:.2rem solid var(--card-border);color:var(--accent)}
-.tu-wait-ic svg{width:3.4rem;height:3.4rem;fill:none;stroke:currentColor;stroke-width:2;animation:tuPulse 1.6s ease-in-out infinite}
-.tu-wait-bad{color:#f87171;background:rgba(248,113,113,.12)}
-.tu-wait-bad svg{animation:none}
-@keyframes tuPulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.1);opacity:1}}
+.tu-wait-wrap{position:relative;width:11.5rem;height:11.5rem;margin:0 auto 1.8rem;display:grid;place-items:center}
+.tu-wait-spin{position:absolute;inset:0;border-radius:50%;border:.22rem solid transparent;border-top-color:var(--accent);border-right-color:var(--accent);animation:tuSpin 1.15s linear infinite}
+.tu-wait-radar{position:absolute;inset:1.1rem;border-radius:50%}
+.tu-wait-radar::before,.tu-wait-radar::after{content:"";position:absolute;inset:0;border-radius:50%;border:.14rem solid var(--glow-mid);animation:tuRadar 2.6s ease-out infinite}
+.tu-wait-radar::after{animation-delay:1.3s}
+.tu-wait-ic{position:relative;z-index:1;width:7rem;height:7rem;border-radius:50%;display:grid;place-items:center;background:linear-gradient(165deg,rgba(28,11,13,.9),rgba(6,3,3,.96));border:.15rem solid var(--card-border);color:var(--accent);box-shadow:0 0 2.4rem rgba(255,31,66,.3)}
+.tu-wait-ic svg{width:3rem;height:3rem;fill:none;stroke:currentColor;stroke-width:2}
+.tu-wait-bad .tu-wait-ic{color:#f87171;box-shadow:none}
+@keyframes tuSpin{to{transform:rotate(360deg)}}
+@keyframes tuRadar{0%{transform:scale(.55);opacity:.6}100%{transform:scale(1.7);opacity:0}}
+.tu-steps{display:flex;flex-direction:column;gap:.9rem;width:100%;max-width:32rem;margin:1.8rem auto 0;text-align:left}
+.tu-step{display:flex;align-items:center;gap:1.1rem;padding:1.2rem 1.4rem;border-radius:1.4rem;background:rgba(255,255,255,.035);border:1px solid var(--glass-line);transition:background .3s,border-color .3s}
+.tu-step-ic{flex:none;width:2.8rem;height:2.8rem;border-radius:50%;display:grid;place-items:center}
+.tu-step-ic svg{width:1.6rem;height:1.6rem}
+.tu-step.done{border-color:rgba(74,222,128,.3)}
+.tu-step.done .tu-step-ic{background:rgba(74,222,128,.16);color:var(--green)}
+.tu-step.active{border-color:rgba(255,31,66,.35);background:rgba(255,31,66,.05)}
+.tu-step.active .tu-step-ic{background:rgba(255,31,66,.16);color:var(--accent)}
+.tu-step.active .tu-step-ic i{display:block;width:.9rem;height:.9rem;border-radius:50%;background:currentColor;animation:tuBlink 1.1s ease-in-out infinite}
+.tu-step b{display:block;font-size:1.4rem}
+.tu-step small{color:var(--muted);font-size:1.2rem}
+@keyframes tuBlink{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.tu-wait-clock{margin-top:1.5rem;font-size:1.25rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .tp-item{display:flex;flex-direction:column;gap:1rem;padding:1.4rem 0;border-bottom:1px solid var(--glass-line)}
 .tp-item:last-child{border-bottom:0}
 .tp-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
@@ -2773,7 +2791,8 @@ $('#v-admin').addEventListener('click',e=>{
 });
 $('#stLowSave').onclick=()=>{const v=Math.floor(+$('#stLow').value);if(!(v>=1&&v<=999))return say('ໃສ່ຕົວເລກ 1 ຫາ 999');DB.low=v;LOW=v;save();renderAdmin();say('ບັນທຶກເກນແຈ້ງເຕືອນແລ້ວ: ≤ '+v)};
 $('#aNameSave').onclick=()=>{const v=$('#aName').value.trim();if(!v)return say('ກະລຸນາໃສ່ຊື່ຮ້ານ');DB.name=v;save();paint();say('ປ່ຽນຊື່ຮ້ານແລ້ວ')};
-$('#aCatAdd').onclick=()=>{const v=$('#aCatIn').value.trim();if(!v)return;if(DB.cats.includes(v))return say('ມີໝວດໝູ່ນີ້ແລ້ວ');DB.cats.push(v);$('#aCatIn').value='';save();renderCats();renderAdmin();say('ເພີ່ມໝວດໝູ່ '+v)};
+$('#aCatAdd').onclick=()=>{const v=$('#aCatIn').value.trim();if(!v)return say('ກະລຸນາໃສ່ຊື່ໝວດໝູ່ກ່ອນ');if(DB.cats.includes(v))return say('ມີໝວດໝູ່ນີ້ແລ້ວ');DB.cats.push(v);$('#aCatIn').value='';save();renderCats();renderAdmin();say('ເພີ່ມໝວດໝູ່ '+v)};
+$('#aCatIn')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#aCatAdd').click()}});
 $('#aNew').onclick=()=>openEd(null);
 $('#bkCopy').onclick=()=>{const t=JSON.stringify(DB);if(legacyCopy(t))return say('ສຳເນົາຂໍ້ມູນສຳຮອງແລ້ວ ('+Math.max(1,Math.round(t.length/1024))+' KB)');if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>say('ສຳເນົາຂໍ້ມູນສຳຮອງແລ້ວ ('+Math.max(1,Math.round(t.length/1024))+' KB)')).catch(()=>{$('#bkBox').value=t;$('#bkBox').select();say('ກົດສຳເນົາຈາກຊ່ອງດ້ານລຸ່ມ')})}else{$('#bkBox').value=t;$('#bkBox').select();say('ກົດສຳເນົາຈາກຊ່ອງດ້ານລຸ່ມ')}};
 $('#bkBox').addEventListener('input',()=>{const b=$('#bkRestore');delete b.dataset.sure;b.textContent='ກູ້ຄືນຂໍ້ມູນ'});
@@ -3550,7 +3569,7 @@ function tuConfetti(){
 /* ---- ເປີດ / ປິດ ---- */
 function tuOpen(){
   if(tu.open||amt<=0) return;
-  clearInterval(tuPoll);
+  clearInterval(tuPoll); clearInterval(tuClock);
   Object.assign(tu,{open:true,busy:false,slip:null});
   tuEl.dataset.st='review'; tuX.disabled=false; tuCard.classList.remove('swap','shake');
   tuReview(); tuScroll.scrollTop=0;
@@ -3562,7 +3581,7 @@ function tuOpen(){
 }
 function tuClose(){
   if(!tu.open||tu.busy) return;
-  clearInterval(tuPoll);
+  clearInterval(tuPoll); clearInterval(tuClock);
   tu.open=false; tuEl.classList.add('closing');
   setTimeout(()=>{
     tuEl.classList.remove('on','show','closing');
@@ -3628,32 +3647,45 @@ async function tuRun(btn){
   tu.busy=false; tuX.disabled=false;
 }
 
-/* ---- ໜ້າລໍຖ້າແອດມິນຢືນຢັນ: poll ສະຖານະທຸກ 2.5 ວິ ---- */
-let tuPoll=null;
+/* ---- ໜ້າລໍຖ້າແອດມິນຢືນຢັນ: checklist 2 ຂັ້ນ + ໂມງນັບເວລາ + poll ສະຖານະທຸກ 2.5 ວິ ---- */
+let tuPoll=null, tuClock=null;
+const tuClockFmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 function tuWaiting(reqId){
   tuFoot.className='om-foot';
+  const t0=Date.now();
   tuScroll.innerHTML=`
     <div class="om-res" role="status">
-      <div class="tu-wait-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-wallet"/></svg></div>
+      <div class="tu-wait-wrap" aria-hidden="true">
+        <i class="tu-wait-spin"></i><i class="tu-wait-radar"></i>
+        <div class="tu-wait-ic"><svg viewBox="0 0 24 24"><use href="#i-wallet"/></svg></div>
+      </div>
       <h2 class="om-title om-in" id="tuT" style="--i:0">ລໍຖ້າແອດມິນຢືນຢັນ</h2>
-      <p class="om-sub om-in" style="--i:1">ອັບໂຫຼດສະລິບແລ້ວ ກຳລັງກວດສອບ...</p>
+      <p class="om-sub om-in" style="--i:1">ກະລຸນາຢູ່ໜ້ານີ້ ລະບົບຈະແຈ້ງທັນທີທີ່ກວດສະລິບສຳເລັດ</p>
       <span class="om-oid om-in" style="--i:2">${K(amt)}</span>
-      <p class="om-line om-in" style="--i:3">ຜ່ານ ${esc(pmShort(pm))} · ປົກກະຕິໃຊ້ເວລາບໍ່ເກີນ 2-3 ນາທີ</p>
+      <p class="om-line om-in" style="--i:3">ຜ່ານ ${esc(pmShort(pm))}</p>
+      <div class="tu-steps om-in" style="--i:4">
+        <div class="tu-step done"><span class="tu-step-ic">${OM_TICK}</span><div><b>ສົ່ງສະລິບສຳເລັດ</b><small>ລະບົບໄດ້ຮັບຄຳຂໍຂອງທ່ານແລ້ວ</small></div></div>
+        <div class="tu-step active"><span class="tu-step-ic"><i></i></span><div><b>ແອດມິນກຳລັງກວດສອບສະລິບ</b><small>ປົກກະຕິໃຊ້ເວລາບໍ່ເກີນ 2-3 ນາທີ</small></div></div>
+      </div>
+      <p class="tu-wait-clock om-in" style="--i:5" id="tuClock">ກຳລັງລໍຖ້າ 0:00</p>
     </div>`;
   tuFoot.innerHTML='';
-  clearInterval(tuPoll);
+  clearInterval(tuPoll); clearInterval(tuClock);
   if(!reqId) return;
+  tuClock=setInterval(()=>{
+    const el=$('#tuClock'); if(el) el.textContent='ກຳລັງລໍຖ້າ '+tuClockFmt(Math.floor((Date.now()-t0)/1000));
+  },1000);
   tuPoll=setInterval(async()=>{
     let r=null; try{r=await rpc('dk_topup_status',{p_token:admToken(),p_request_id:reqId})}catch(e){return}
     if(!r||!r.ok) return;
     if(r.status==='approved'){
-      clearInterval(tuPoll); DB.credit=r.credit; save(); paint();
+      clearInterval(tuPoll); clearInterval(tuClock); DB.credit=r.credit; save(); paint();
       addTx('add',amt,'ເຕີມເງິນຜ່ານ '+pm+' (ແນບສະລິບ)');
       const hist=$('#hist'); if(hist) hist.insertAdjacentHTML('afterbegin',feedRow('in','ເຕີມເງິນຜ່ານ '+esc(pmShort(pm))+' (ແນບສະລິບ)','ຫາກໍ່ນີ້','+'+K(amt)));
       tuEl.dataset.st='success'; tu.done=true; tuSuccess();
       const f=$('#tuDone'); if(f) f.focus({preventScroll:true});
     }else if(r.status==='rejected'){
-      clearInterval(tuPoll); tuEl.dataset.st='rejected'; tuRejected();
+      clearInterval(tuPoll); clearInterval(tuClock); tuEl.dataset.st='rejected'; tuRejected();
     }
   },2500);
 }
@@ -3661,7 +3693,7 @@ function tuRejected(){
   tuFoot.className='om-foot';
   tuScroll.innerHTML=`
     <div class="om-res" role="status">
-      <div class="tu-wait-ic tu-wait-bad" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+      <div class="tu-wait-wrap tu-wait-bad" aria-hidden="true"><div class="tu-wait-ic"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></div></div>
       <h2 class="om-title rs" id="tuT" style="--i:0">ບໍ່ອະນຸມັດການເຕີມເງິນ</h2>
       <p class="om-sub rs" style="--i:1">ສະລິບ ຫຼືຂໍ້ມູນການໂອນເງິນບໍ່ຖືກຕ້ອງ ກະລຸນາຕິດຕໍ່ແອດມິນ ຫຼືລອງໃໝ່ອີກຄັ້ງ</p>
     </div>`;
