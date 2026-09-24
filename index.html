@@ -1445,6 +1445,11 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
 @keyframes omPickTxt{0%{transform:translateX(0)}30%{transform:translateX(.7rem)}100%{transform:none}}
 .om-rdy::before{content:"";display:inline-block;width:.5rem;height:.5rem;margin-right:.5rem;border-radius:50%;vertical-align:.1rem;
   background:var(--green);box-shadow:0 0 .6rem var(--green);animation:pcBlink 1.6s ease-in-out infinite}
+.om-rdy.out{color:#f87171;background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3)}
+.om-rdy.out::before{background:#f87171;box-shadow:0 0 .6rem #f87171;animation:none}
+.om-dchip.off{opacity:.42;cursor:not-allowed;filter:grayscale(.4)}
+.om-dchip.off:active{transform:none}
+@media (hover:hover) and (pointer:fine){.om-dchip.off:hover{translate:none}}
 .om-dcheck .om-pt{position:absolute;left:50%;top:50%;width:.5rem;height:.5rem;margin:-.25rem 0 0 -.25rem;border-radius:50%;background:#fff;pointer-events:none;
   box-shadow:0 0 .6rem rgba(255,79,106,.9);box-shadow:0 0 .6rem var(--om-c);animation:omPt .7s cubic-bezier(.2,.7,.2,1) forwards}
 @keyframes omPt{0%{opacity:1;transform:rotate(var(--a)) translateY(0) scale(1)}100%{opacity:0;transform:rotate(var(--a)) translateY(calc(var(--r)*-1)) scale(.3)}}
@@ -2334,7 +2339,7 @@ function save(){try{sanitizeMoney();localStorage.setItem(SK,JSON.stringify(DB,fu
 /* One-time: convert previously saved baht amounts to kip (approx. 1 THB = 650 LAK, rounded to nearest 1,000) */
 if(DB.cur!=='LAK'){const kp=v=>Math.round((+v||0)*650/1000)*1000;DB.credit=kp(DB.credit);DB.products.forEach(p=>{p.price=kp(p.price)});DB.cur='LAK';save()}
 const sym=p=>IC[p.cat]||'i-grid';
-const pDurs=p=>(p.durs||[]).filter(d=>d&&String(d.label||'').trim()).map(d=>({label:String(d.label).trim(),price:Math.max(0,+d.price||0)}));
+const pDurs=p=>(p.durs||[]).filter(d=>d&&String(d.label||'').trim()).map(d=>({label:String(d.label).trim(),price:Math.max(0,+d.price||0),stock:Math.max(0,+d.stock||0)}));
 const pMin=p=>{const a=pDurs(p);return a.length?Math.min(...a.map(d=>d.price)):p.price};
 const pMulti=p=>pDurs(p).length>1;
 function paint(){
@@ -3367,7 +3372,7 @@ if(!RM) (function(){
 const om={open:false,busy:false,done:false,pid:null,trigger:null,cv:'c1',timer:0,dur:0,qty:1,total:0};
 /* ตัวเลือกไລยะเวลา: mul = สัดส่วนราคาเทียบกับราคาสินค้าที่ตั้งไว้ (ถือเป็นราคาแพ็ก 30 ມື້) — ปรับตัวเลขได้ตามต้องการ */
 /* ตัวเลือกไລຍະເວລາ: ດຶງຈາກສິນຄ້າແຕ່ລະຕົວ (p.durs) ທີ່ແອດມິນຕັ້ງເອງ; ຖ້າບໍ່ມີ = ໃຊ້ລາຄາຫຼັກ ບໍ່ສະແດງໂຕເລືອກ */
-const durOpts=p=>{const a=pDurs(p);return a.length?a.map((x,i)=>({d:i,label:x.label,price:x.price})):[{d:0,label:'',price:p.price,solo:true}]};
+const durOpts=p=>{const a=pDurs(p);return a.length?a.map((x,i)=>({d:i,label:x.label,price:x.price,stock:x.stock})):[{d:0,label:'',price:p.price,stock:Math.max(0,+p.stock||0),solo:true}]};
 const curDur=p=>{const o=durOpts(p);return o.find(x=>x.d===om.dur)||o[0]};
 const durPrice=(p,dd)=>dd.price;
 const omEl=$('#orderModal'),omCard=$('#omCard'),omScroll=$('#omScroll'),omFoot=$('#omFoot'),omX=$('#omX');
@@ -3387,7 +3392,7 @@ function omReview(p){
   const im=p.imgs&&p.imgs[0];
   const dd=curDur(p);
   const disc=0; /* ร้านนี้ยังไม่มีระบบส่วนลด → 0 (ตรงกับที่ระบบเดิมหักจริง) */
-  const maxQ=Math.min(99,Math.max(1,p.stock||1)); if(om.qty>maxQ) om.qty=maxQ;
+  const maxQ=Math.min(99,Math.max(1,dd.stock||1)); if(om.qty>maxQ) om.qty=maxQ;
   const total=durPrice(p,dd)*om.qty-disc, short=DB.credit<total;
   om.total=total;
   omFoot.className='om-foot';
@@ -3407,7 +3412,7 @@ function omReview(p){
       <div class="om-dur om-in" style="--i:4"${durOpts(p)[0].solo?' hidden':''}>
         <span class="om-dur-lbl"><svg aria-hidden="true"><use href="#i-clock"/></svg>ເລືອກໄລຍະເວລາ</span>
         <div class="om-dur-grid" id="omDurGrid">
-          ${durOpts(p).map((x,i)=>`<button type="button" class="om-dchip${x.d===om.dur?' on':''}" style="--k:${i}" data-d="${x.d}" aria-pressed="${x.d===om.dur}"><i class="om-spot" aria-hidden="true"></i><span class="om-dtxt"><b>${esc(x.label)}</b><span>${K(durPrice(p,x))}</span></span><span class="om-dright"><span class="tag om-rdy">ພ້ອມສົ່ງ</span><span class="om-dcheck" aria-hidden="true"><svg><use href="#i-tick"/></svg></span></span></button>`).join('')}
+          ${durOpts(p).map((x,i)=>{const out=x.stock<=0;return `<button type="button" class="om-dchip${x.d===om.dur?' on':''}${out?' off':''}" style="--k:${i}" data-d="${x.d}" aria-pressed="${x.d===om.dur}" aria-disabled="${out}" ${out?'disabled':''}><i class="om-spot" aria-hidden="true"></i><span class="om-dtxt"><b>${esc(x.label)}</b><span>${K(durPrice(p,x))}</span></span><span class="om-dright"><span class="tag om-rdy${out?' out':''}">${out?'ບໍ່ພ້ອມຂາຍ':'ເຫຼືອ '+x.stock}</span><span class="om-dcheck" aria-hidden="true"><svg><use href="#i-tick"/></svg></span></span></button>`}).join('')}
         </div>
       </div>
       <div class="om-qty om-in" style="--i:5">
@@ -3447,7 +3452,7 @@ function omAnimNum(el,from,to,dur){
 function omSetDur(d){
   if(!om.open||om.busy||om.done) return;
   const p=DB.products.find(x=>x.id==om.pid); if(!p) return;
-  const dd=durOpts(p).find(x=>x.d===d); if(!dd) return;
+  const dd=durOpts(p).find(x=>x.d===d); if(!dd||dd.stock<=0) return;
   if(d===om.dur) return;
   const prevTotal=om.total;
   om.dur=d;
@@ -3471,7 +3476,7 @@ function omSetDur(d){
 function omSetQty(delta){
   if(!om.open||om.busy||om.done) return;
   const p=DB.products.find(x=>x.id==om.pid); if(!p) return;
-  const maxQ=Math.min(99,Math.max(1,p.stock||1));
+  const maxQ=Math.min(99,Math.max(1,curDur(p).stock||1));
   const q=Math.min(maxQ,Math.max(1,om.qty+delta));
   if(q===om.qty) return;
   om.qty=q;
@@ -3529,7 +3534,8 @@ function openOrderModal(id,trigger){
   if(!p) return say('ບໍ່ພົບສິນຄ້ານີ້ໃນລະບົບ');
   clearTimeout(om.timer);
   const pc=trigger&&trigger.closest&&trigger.closest('.pcard'), cv=pc&&pc.querySelector('.cv'); /* ใช้สีปกเดียวกับการ์ดสินค้าที่กด */
-  Object.assign(om,{open:true,busy:false,done:false,pid:p.id,trigger:trigger||document.activeElement,cv:(cv&&(cv.className.match(/\bc[1-4]\b/)||[])[0])||'c1',dur:0,qty:1,total:0});
+  const opts=durOpts(p),firstAvail=opts.find(x=>x.stock>0)||opts[0];
+  Object.assign(om,{open:true,busy:false,done:false,pid:p.id,trigger:trigger||document.activeElement,cv:(cv&&(cv.className.match(/\bc[1-4]\b/)||[])[0])||'c1',dur:firstAvail.d,qty:1,total:0});
   omEl.dataset.st='review'; omX.disabled=false; omCard.classList.remove('swap','shake');
   omReview(p); omScroll.scrollTop=0;
   document.documentElement.classList.add('om-lock');
