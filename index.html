@@ -3125,8 +3125,9 @@ async function histLoad(){ /* ປະຫວັດຫຼ້າສຸດໃນໜ�
    ໃນຟັງຊັນ dk_admin_call ວ່າ token ນີ້ແມ່ນບັນຊີ BeertJ ແທ້ (ເບິ່ງໝາຍເຫດໃນ dk_accounts.sql) */
 const ADMIN_USER='BeertJ';
 window.__isAdmin=false;
-function applyAdminVisibility(user){
-  const isAdmin = user===ADMIN_USER;
+function applyAdminVisibility(user,role){
+  /* ແອດມິນ = ເຊີບເວີຢືນຢັນ role='admin' (ຈາກຕາຣາງ accounts) ແລະ ຊື່ຕົງ BeertJ ທັງສອງຢ່າງ — ບັນຊີລູກຄ້າທີ່ຕັ້ງຊື່ຄືກັນຈະບໍ່ເຫັນແທັບແອດມິນ */
+  const isAdmin = role==='admin' && user===ADMIN_USER;
   window.__isAdmin = isAdmin;
   const btn=$('.item.admin'), nav=$('.nav');
   if(btn) btn.style.display = isAdmin?'':'none';
@@ -3146,7 +3147,7 @@ async function authCheck(){
   if(!tk) return authKick('none');
   try{
     const r=await rpc('dk_check',{p_token:tk});
-    if(r&&r.ok){authExp=r.exp||0;authOff=r.now-Date.now();const un=$('#uname');if(un)un.textContent=r.user;try{localStorage.setItem('dekma_user',r.user)}catch(e){}applyAdminVisibility(r.user);renderMyAccount();loadHomeStats();walletLoad();productsLoad();return}
+    if(r&&r.ok){authExp=r.exp||0;authOff=r.now-Date.now();const un=$('#uname');if(un)un.textContent=r.user;try{localStorage.setItem('dekma_user',r.user)}catch(e){}applyAdminVisibility(r.user,r.role);renderMyAccount();loadHomeStats();walletLoad();productsLoad();return}
     if(r&&r.code) authKick(r.code); /* ເຕະອອກສະເພາະເມື່ອເຊີບເວີບອກຊັດເຈນ */
   }catch(e){
     /* ເນັດຫຼຸດ/ເຊີບເວີຊ້າ = ຫ້າມເຕະອອກ · ຍົກເວັ້ນ offline ຫຼັງໝົດເວລາແລ້ວ >60 ວິ */
