@@ -2206,6 +2206,7 @@ const overlay=$('#cineOverlay');
 function show(v){
   if(v==='admin'&&!window.__isAdmin) v='home';
   if(!$('#v-'+v)) v='home';
+  if(typeof walletLoad==='function') walletLoad(v==='topup'); /* ຍອດເງິນສົດໃໝ່ຈາກເຊີບເວີທຸກຄັ້ງທີ່ເປີດໜ້າ */
   const cur=$('.view.on'), target=$('#v-'+v);
   $$('.nav .item').forEach(b=>b.classList.toggle('on',b.dataset.go===v));
   const idx=$$('.nav .item').findIndex(b=>b.dataset.go===v);
@@ -2246,7 +2247,7 @@ $$('.nav .item').forEach(b=>b.addEventListener('click',()=>{
 
 /* ===== ข้อมูลตัวอย่าง (แทนที่ด้วยข้อมูลจริง / Supabase ภายหลัง) =====
    แต่ละรายการ = [ชื่อ, หมวด, ราคา, สต๊อก, URL รูป(ไม่ใส่ = ใช้ภาพปกไอคอน)] */
-const DEMO={user:'ຕົວແທນ #0019',credit:800000};
+const DEMO={user:'ຕົວແທນ #0019',credit:0}; /* ເຄຣດິດບໍ່ມີຄ່າຕັ້ງຕົ້ນອີກແລ້ວ: ຍອດຈິງມາຈາກຕາຕະລາງ wallets ຝັ່ງເຊີບເວີ (ແຍກຕາມບັນຊີ) */
 const UNL=9999; /* สินค้าที่สร้างใหม่ = ไม่จำกัดจำนวน */
 const P=[]; /* ไม่มีสินค้าตัวอย่างแล้ว — เพิ่มสินค้าจริงผ่านแท็บแอดมิน */
 const IC={'ໂປຣແກຣມ':'i-grid','ຫ້ອງການ':'i-boxes','ຄວາມປອດໄພ':'i-check','ເກມ':'i-bolt','IOS':'i-apple','ANDROID':'i-android'};
@@ -2276,6 +2277,7 @@ const SK='dekma_store_v1'; let DB;
 try{DB=JSON.parse(localStorage.getItem(SK))}catch(e){}
 if(!DB||!DB.products) DB={name:'DekmaSH Stowe',cur:'LAK',credit:DEMO.credit,cats:['ໂປຣແກຣມ','ຫ້ອງການ','ຄວາມປອດໄພ','ເກມ','IOS','ANDROID'],seq:P.length+1,
   products:P.map((p,i)=>({id:i+1,code:'P-'+String(i+1).padStart(4,'0'),name:p[0],cat:p[1],price:p[2],stock:p[3],desc:'',imgs:[],keys:[],auto:false}))};
+DB.credit=0; /* ຍອດເງິນບໍ່ອ່ານຈາກ localStorage (ໃຊ້ຮ່ວມກັນທຸກບັນຊີໃນເຄື່ອງນີ້) — walletLoad() ດຶງຍອດຂອງບັນຊີທີ່ login ຢູ່ຈາກເຊີບເວີ */
 /* Migrate older saved data: Thai sample categories/names -> Lao */
 const TH2LO={'โปรแกรม':'ໂປຣແກຣມ','ออฟฟิศ':'ຫ້ອງການ','ความปลอดภัย':'ຄວາມປອດໄພ','เกม':'ເກມ','Antivirus Plus 1 ปี':'Antivirus Plus 1 ປີ','VPN Premium 30 วัน':'VPN Premium 30 ມື້','iOS Signing Cert 1 ปี':'iOS Signing Cert 1 ປີ'};
 DB.cats=(DB.cats||[]).map(c=>TH2LO[c]||c);DB.products.forEach(p=>{p.cat=TH2LO[p.cat]||p.cat;p.name=TH2LO[p.name]||p.name});
@@ -2288,7 +2290,7 @@ function sanitizeMoney(){
   (DB.orders||[]).forEach(o=>{o.price=realInt(o.price)});
   (DB.tx||[]).forEach(x=>{x.n=realInt(x.n);x.after=realInt(x.after)});
 }
-function save(){try{sanitizeMoney();localStorage.setItem(SK,JSON.stringify(DB));return true}catch(e){say('ບັນທຶກບໍ່ໄດ້ (ພື້ນທີ່ເຕັມ ຫຼື ບຼາວເຊີບໍ່ອະນຸຍາດ)');return false}}
+function save(){try{sanitizeMoney();localStorage.setItem(SK,JSON.stringify(DB,function(k,v){return(this===DB&&k==='credit')?undefined:v}));return true}catch(e){say('ບັນທຶກບໍ່ໄດ້ (ພື້ນທີ່ເຕັມ ຫຼື ບຼາວເຊີບໍ່ອະນຸຍາດ)');return false}}
 /* ลบสินค้าตัวอย่างเดิมที่เคยถูกบันทึกไว้ในเครื่อง (เฉพาะรายการที่ยังเป็นค่าตั้งต้น ไม่มีรูป/คีย์/คำอธิบาย) */
 (function(){const OLD=new Set(["Video Editor Pro","Antivirus Plus 1 ປີ","Office Suite 2021","VPN Premium 30 ມື້","Design Studio License","Game Booster Key","PDF Toolkit Pro","Cloud Storage 1TB","iOS Signing Cert 1 ປີ","iOS App Unlocker","Android Premium Pack","Android VPN Pro"]);const n0=DB.products.length;
   DB.products=DB.products.filter(p=>!(OLD.has(p.name)&&/^P-00\d\d$/.test(p.code||'')&&!(p.imgs&&p.imgs.length)&&!(p.keys&&p.keys.length)&&!p.desc));
@@ -2380,25 +2382,35 @@ function addOrder(p,k,price,durLabel,qty){DB.orders=DB.orders||[];DB.orderSeq=DB
 /* ระบบออเดอร์เดิม: ตรรกะทุกบรรทัดเหมือนเดิม (เช็กสต็อก → เช็กเครดิต → หักเครดิต → addTx → ดึงคีย์ → ตัดสต็อก → addOrder → save → paint/render)
    แยกเป็น placeOrder() ที่ "คืนผลลัพธ์" แทนการ toast/เปิด sheet เอง เพื่อให้หน้าต่างยืนยันแสดง Success / Error ได้
    Flow: ปุ่ม "ສັ່ງຊື້" → buy() → openOrderModal() → กดยืนยัน → placeOrder() → Loading → Success / Error */
-function placeOrder(id,amount,durLabel,qty){
+async function placeOrder(id,amount,durLabel,qty){
   const p=DB.products.find(x=>x.id==id);
   const n=Math.max(1,+qty||1);
   if(!p) return {ok:false,code:'notfound',msg:'ບໍ່ພົບສິນຄ້ານີ້ໃນລະບົບ'};
+  const durObj=(p.durs||[]).find(d=>d.label===durLabel);
+  if(!durObj||!durObj.id) return {ok:false,code:'notfound',msg:'ບໍ່ພົບໄລຍະເວລານີ້ໃນລະບົບ'};
   if(p.stock<n) return {ok:false,code:'stock',msg:'ສິນຄ້ານີ້ມີສະຕັອກບໍ່ພຽງພໍ'};
-  const total=realInt((amount!=null&&amount>0)?amount:p.price*n);
-  if(realInt(DB.credit)<total) return {ok:false,code:'credit',msg:'ເຄຣດິດບໍ່ພໍ ກະລຸນາເຕີມເງິນກ່ອນ'};
-  DB.credit=realInt(DB.credit)-total;addTx('buy',-total,durLabel||'',p.name);
-  /* ถ้าสินค้ามีตัวเลือกระยะเวลา ให้ดึงรหัส/ไอดีจากคลังของระยะเวลานั้นโดยเฉพาะ (เติมไว้ตอนเติมสต๊อก)
-     ถ้าไม่มีตัวเลือกระยะเวลาเลย ใช้คลังรหัสแบบเดิม (p.keys) */
-  const pool=(durLabel&&p.keysByDur&&p.keysByDur[durLabel])?p.keysByDur[durLabel]:p.keys;
-  const k=p.auto&&pool&&pool.length>=n?pool.splice(0,n).join('\n'):null;
-  p.stock=p.auto?allKeys(p).length:(p.stock>=UNL?p.stock:p.stock-n); addOrder(p,k,total,durLabel,n); save();
+  /* ສັ່ງຊື້ຈິງ: ຫັກເຄຣດິດ + ຕັດສະຕັອກລະຫັດ + ສ້າງອໍເດີ ໃນທຣານແຊັກຊັນດຽວທີ່ເຊີບເວີ (dk_buy) */
+  let r=null;
+  try{r=await rpc('dk_buy',{p_token:admToken(),p_duration_id:durObj.id,p_qty:n})}
+  catch(e){return {ok:false,code:'net',msg:'ເຊື່ອມຕໍ່ບໍ່ໄດ້ ກະລຸນາກວດອິນເຕີເນັດ ແລ້ວລອງໃໝ່'}}
+  if(!r||!r.ok){
+    if(r&&r.code==='insufficient_credit'){DB.credit=realInt(r.balance);try{paint()}catch(e){}return {ok:false,code:'credit',msg:'ເຄຣດິດບໍ່ພໍ ກະລຸນາເຕີມເງິນກ່ອນ'}}
+    if(r&&r.code==='no_session'){authCheck();return {ok:false,code:'session',msg:'Session ໝົດອາຍຸ ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່'}}
+    if(r&&r.code==='stock'){productsLoad();return {ok:false,code:'stock',msg:'ສິນຄ້ານີ້ມີສະຕັອກບໍ່ພຽງພໍ'}}
+    return {ok:false,code:'err',msg:'ສັ່ງຊື້ບໍ່ສຳເລັດ ກະລຸນາລອງໃໝ່ອີກຄັ້ງ'}
+  }
+  const total=realInt(r.total);
+  DB.credit=realInt(r.balance);addTx('buy',-total,durLabel||'',p.name);
+  const k=(r.codes||[]).join('\n');
+  p.stock=Math.max(0,p.stock-n); addOrder(p,k,total,durLabel,n); save();
+  productsLoad(); /* ຊິ້ງສະຕັອກ/ໄອດີໃຫ້ກົງກັບເຊີບເວີ 100% ຢູ່ພື້ນຫຼັງ */
   const order=DB.orders[0];
   /* ออเดอร์สำเร็จแล้ว (หักเครดิต+save ผ่านไปแล้ว) — แยก try/catch ของแต่ละ render ออกจากกัน
      เดิมรวมอยู่ใน try เดียว ถ้าตัวใดตัวหนึ่งพัง (เช่น element ของหน้าที่ไม่ได้เปิดอยู่หาไม่เจอ)
      จะทำให้ตัวที่เหลือ "ไม่ทำงานเลย" รวมถึง paint() ที่อัปเดตตัวเลขเครดิตบนหน้าจอ ->
      ดูเหมือนสั่งซื้อสำเร็จแต่ยอดเครดิตนิ่ง ทั้งที่ DB.credit ถูกหักและ save ไปแล้วจริง */
   try{paint()}catch(e){console.error('paint() หลังสั่งซื้อ error:',e)}
+  try{histLoad()}catch(e){}
   try{renderP()}catch(e){console.error('renderP() หลังสั่งซื้อ error:',e)}
   try{renderAdmin()}catch(e){console.error('renderAdmin() หลังสั่งซื้อ error:',e)}
   return {ok:true,p,key:k,order,total,qty:n};
@@ -2712,8 +2724,12 @@ sheet.addEventListener('click',e=>{const t=e.target,p=DB.products.find(x=>x.id==
   }
   if(t.closest('[data-rnsave]')){const v=$('#rnIn').value.trim();if(!v)return say('ກະລຸນາໃສ່ຊື່ໝວດໝູ່');
     if(v!==rnOld&&DB.cats.includes(v))return say('ມີໝວດໝູ່ນີ້ແລ້ວ');
-    DB.cats=DB.cats.map(c=>c===rnOld?v:c);DB.products.forEach(p=>{if(p.cat===rnOld)p.cat=v});if(cat===rnOld)cat=v;
-    save();renderCats();renderP();renderAdmin();closeSheet();say('ແກ້ຊື່ໝວດໝູ່ແລ້ວ')}
+    (async()=>{
+      const r=await adm('cat_rename',{old:rnOld,new:v}).catch(()=>null);
+      if(!r||!r.ok) return say('ແກ້ຊື່ໝວດໝູ່ບໍ່ສຳເລັດ');
+      DB.cats=DB.cats.map(c=>c===rnOld?v:c);if(cat===rnOld)cat=v;
+      await productsLoad();renderCats();renderP();renderAdmin();closeSheet();say('ແກ້ຊື່ໝວດໝູ່ແລ້ວ')
+    })()}
 });
 
 /* ---- events ---- */
@@ -2744,30 +2760,42 @@ $('#crF').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b
 $('#crSeg').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b){cr.mode=b.dataset.m;crSync()}});
 $('#crAmt').addEventListener('input',crSync);
 $('#crQuick').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b)return;$('#crAmt').value=fmt(numVal($('#crAmt').value)+ +b.dataset.q);crSync()});
-$('#rsGo').addEventListener('click',()=>{
+$('#rsGo').addEventListener('click',async()=>{
   const p=rsProd(); if(!p) return say('ກະລຸນາເລືອກສິນຄ້າກ່ອນ');
   const c=rsCalc(),go=$('#rsGo'); let n;
   if(rs.mode==='keys'){
     if(!c.add.length) return say('ຍັງບໍ່ມີລະຫັດໃໝ່ທີ່ຈະເພີ່ມ');
     if(!p.auto&&p.stock>0&&!go.dataset.sure){go.dataset.sure=1;$('#rsGoT').textContent='ແຕະອີກຄັ້ງເພື່ອຢືນຢັນປ່ຽນເປັນສົ່ງອັດຕະໂນມັດ';return}
-    let durLabel=rsDurLabel();
+    let durLabel=rsDurLabel(),durId=null;
+    go.disabled=true;
     if(rs.dur==='__new__'){
-      if(!durLabel) return say('ໃສ່ຊື່ໄລຍະເວລາໃໝ່ກ່ອນ');
-      if(!p.durs.some(d=>d.label===durLabel)){p.durs.push({label:durLabel,price:Math.max(0,toReal($('#rsDurPrice').value))});p.keysByDur[durLabel]=p.keysByDur[durLabel]||[]}
+      if(!durLabel){go.disabled=false;return say('ໃສ່ຊື່ໄລຍະເວລາໃໝ່ກ່ອນ')}
+      const dr=await adm('dur_upsert',{product_id:p.id,label:durLabel,price:Math.max(0,toReal($('#rsDurPrice').value))}).catch(()=>null);
+      if(!dr||!dr.ok){go.disabled=false;return say('ສ້າງໄລຍະເວລາໃໝ່ບໍ່ສຳເລັດ')}
+      durId=dr.id; p.durs.push({id:durId,label:durLabel,price:Math.max(0,toReal($('#rsDurPrice').value)),stock:0}); p.keysByDur[durLabel]=[];
+    }else{
+      const dObj=(p.durs||[]).find(d=>d.label===durLabel); durId=dObj&&dObj.id;
     }
-    const pool=durLabel?(p.keysByDur[durLabel]=p.keysByDur[durLabel]||[]):p.keys;
-    pool.push(...c.add);p.auto=true;p.stock=allKeys(p).length;n=c.add.length;
-    rs.dur=durLabel||'';
+    if(!durId){go.disabled=false;return say('ບໍ່ພົບໄລຍະເວລານີ້ໃນຖານຂໍ້ມູນ')}
+    const kr=await adm('keys_add',{duration_id:durId,codes:c.add.join('\n')}).catch(()=>null);
+    go.disabled=false;
+    if(!kr||!kr.ok) return say('ບັນທຶກລະຫັດລົງຖານຂໍ້ມູນບໍ່ສຳເລັດ');
+    n=kr.added||c.add.length; rs.dur=durLabel||'';
+    addLog(p,rs.mode,n);
+    $('#rsKeys').value='';$('#rsQty').value='';
+    await productsLoad();
+    renderAdmin();rsSync();burst('+'+n,p.name+' · ເຫຼືອ '+(rsProd()?rsProd().stock:0));
   }else{
     if(p.auto||!c.n) return say('ກະລຸນາໃສ່ຈຳນວນ');
     p.stock+=c.n;n=c.n;
+    addLog(p,rs.mode,n);
+    if(!save()) return;
+    $('#rsKeys').value='';$('#rsQty').value='';
+    renderP();renderAdmin();rsSync();burst('+'+n,p.name+' · ເຫຼືອ '+p.stock);
   }
-  addLog(p,rs.mode,n);
-  if(!save()) return;
-  $('#rsKeys').value='';$('#rsQty').value='';
-  renderP();renderAdmin();rsSync();burst('+'+n,p.name+' · ເຫຼືອ '+p.stock);
 });
 $('#crGo').addEventListener('click',()=>{
+  return say('ປິດໃຊ້ງານແລ້ວ: ເຄຣດິດເກັບຢູ່ຕາຕະລາງ wallets ຝັ່ງເຊີບເວີ ແຍກຕາມບັນຊີ'); /* legacy: ເຄີຍປັບຍອດໃນເຄື່ອງ ເຮັດໃຫ້ທຸກບັນຊີເຫັນຍອດດຽວກັນ */
   const amt=toReal($('#crAmt').value),add=cr.mode==='add'; if(amt<=0) return;
   if(!add&&amt>DB.credit) return say('ຫັກເກີນຍອດຄົງເຫຼືອບໍ່ໄດ້');
   DB.credit+=add?amt:-amt; addTx(add?'add':'sub',add?amt:-amt,$('#crNote').value.trim());
@@ -2830,16 +2858,22 @@ function drawEd(){
 }
 function shrink(f){return new Promise(r=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,640/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);r(c.toDataURL('image/jpeg',.82))};im.onerror=()=>r(null);im.src=u})}
 sheet.addEventListener('change',async e=>{if(e.target.id!=='eImg')return;pull();for(const f of e.target.files){const d=await shrink(f);if(d)ed.imgs.push(d)}drawEd()});
-sheet.addEventListener('click',e=>{
+sheet.addEventListener('click',async e=>{
   const t=e.target;
   if(t===sheet||t.closest('[data-close]')) return closeSheet();
   const rm=t.closest('[data-rmimg]'); if(rm){pull();ed.imgs.splice(+rm.dataset.rmimg,1);return drawEd()}
   if(t.closest('#eDel')){const b=t.closest('#eDel');if(!b.dataset.sure){b.dataset.sure=1;b.textContent='ແຕະອີກຄັ້ງເພື່ອຢືນຢັນການລຶບ';return}
-    DB.products=DB.products.filter(p=>p.id!==ed.id);save();renderP();renderAdmin();closeSheet();return say('ລຶບສິນຄ້າແລ້ວ')}
+    b.disabled=true;
+    const r=await adm('prod_delete',{id:ed.id}).catch(()=>null);
+    if(!r||!r.ok){b.disabled=false;return say('ລຶບສິນຄ້າບໍ່ສຳເລັດ ກະລຸນາລອງໃໝ່')}
+    await productsLoad();renderP();renderAdmin();closeSheet();return say('ລຶບສິນຄ້າແລ້ວ')}
   if(t.closest('#eSave')){pull();if(!ed.name.trim())return say('ກະລຸນາໃສ່ຊື່ສິນຄ້າ');
-    ed.auto=allKeys(ed).length>0; if(ed.auto) ed.stock=allKeys(ed).length;
-    if(ed.id){DB.products[DB.products.findIndex(p=>p.id===ed.id)]=ed}else{ed.id=DB.seq++;DB.products.push(ed)}
-    if(!save())return; renderCats();renderP();renderAdmin();closeSheet();say('ບັນທຶກສິນຄ້າແລ້ວ')}
+    const btn=t.closest('#eSave'); btn.disabled=true;
+    const r=await adm('prod_upsert',{id:ed.id,name:ed.name,category:ed.cat,description:ed.desc,icon_url:ed.imgs[0]||'',is_active:true}).catch(()=>null);
+    if(!r||!r.ok){btn.disabled=false;return say('ບັນທຶກສິນຄ້າບໍ່ສຳເລັດ ກະລຸນາລອງໃໝ່')}
+    /* ສິນຄ້າໃໝ່ທີ່ຍັງບໍ່ມີໄລຍະເວລາ → ສ້າງໄລຍະ "ມາດຕະຖານ" ຈາກລາຄາທີ່ຕັ້ງ ເພື່ອໃຫ້ຊື້ໄດ້ທັນທີ (ເຕີມຄີຢ໌ຕໍ່ໃນແຖບ "ເຕີມສະຕັອກ") */
+    if(!ed.durs||!ed.durs.length) await adm('dur_upsert',{product_id:r.id,label:'ມາດຕະຖານ',price:ed.price||0}).catch(()=>null);
+    await productsLoad();renderCats();renderP();renderAdmin();closeSheet();say('ບັນທຶກສິນຄ້າແລ້ວ')}
 });
 document.addEventListener('click',e=>{
   const c=e.target.closest('[data-copy]'); if(c) return copy(c.dataset.copy);
@@ -3011,6 +3045,32 @@ async function rpc(fn,args){
   return r.json();
 }
 
+/* ============================================================
+   ເຄຣດິດ (ກະເປົາເງິນ) — ເກັບໃນຕາຕະລາງ public.wallets ຝັ່ງເຊີບເວີ · 1 ບັນຊີ = 1 ແຖວ · ເລີ່ມຕົ້ນ 0
+   ບໍ່ອ່ານ/ບໍ່ບັນທຶກຍອດໃນ localStorage ອີກ (ເຄື່ອງດຽວກັນໃຊ້ຫຼາຍບັນຊີໄດ້ ໂດຍຍອດບໍ່ປົນກັນ)
+   ============================================================ */
+async function walletLoad(withHist){
+  const tk=admToken(); if(!tk) return;
+  const my=(walletLoad.seq=(walletLoad.seq||0)+1);   /* (ເກັບໃນ property ຂອງຟັງຊັນ: ເອີ້ນຕອນເລີ່ມໜ້າໄດ້ໂດຍບໍ່ຕິດ TDZ) */
+  try{
+    const r=await rpc('dk_wallet',{p_token:tk});
+    if(my!==walletLoad.seq) return;                  /* ມີຄຳຖາມໃໝ່ກວ່າ: ໃຊ້ຄ່າຫຼ້າສຸດເທົ່ານັ້ນ */
+    if(r&&r.ok){const nb=realInt(r.balance); if(nb!==DB.credit||!walletLoad.done){DB.credit=nb;walletLoad.done=1;paint()}}
+  }catch(e){ /* ເນັດຫຼຸດ: ປ່ອຍຍອດເກົ່າໄວ້ ລອງໃໝ່ຮອບຕໍ່ໄປ */ }
+  if(withHist) histLoad();
+}
+const CTX_T={topup:'ເຕີມເງິນ',purchase:'ຊື້ສິນຄ້າ',refund:'ຄືນເງິນ',admin_adjust:'ແອດມິນປັບຍອດ'};
+async function histLoad(){ /* ປະຫວັດຫຼ້າສຸດໃນໜ້າເຕີມເງິນ = ທຸລະກຳຈິງຂອງບັນຊີນີ້ (credit_tx) */
+  const box=$('#hist'), tk=admToken(); if(!box||!tk) return;
+  let r=null; try{r=await rpc('dk_my_credit_tx',{p_token:tk,p_limit:20})}catch(e){return}
+  if(!r||!r.ok) return;
+  const items=r.items||[];
+  box.innerHTML=items.length?items.map(x=>{
+    const n=+x.amount||0,out=n<0,note=(x.type==='purchase'||x.type==='admin_adjust')&&x.note?' · '+x.note:'';
+    return feedRow(out?'out':'in',CTX_T[x.type]||'ທຸລະກຳ',fdate(x.created)+note,(out?'−':'+')+K(Math.abs(n)));
+  }).join(''):'<p class="note">ຍັງບໍ່ມີປະຫວັດການເຕີມເງິນ ຫຼືການຊື້</p>';
+}
+
 /* ---- ບັນຊີແອດມິນ: ສະແດງແທັບແອດມິນສະເພາະບັນຊີນີ້ (ຊື່ຕ້ອງກົງກັບ p_user ຝັ່ງ Supabase)
    ໝາຍເຫດ: ນີ້ເປັນການເຊື່ອງໜ້າຈໍໃນເຄື່ອງລູກຄ້າເທົ່ານັ້ນ (UX) — ຄວາມປອດໄພຈິງຕ້ອງກວດຝັ່ງເຊີບເວີ
    ໃນຟັງຊັນ dk_admin_call ວ່າ token ນີ້ແມ່ນບັນຊີ BeertJ ແທ້ (ເບິ່ງໝາຍເຫດໃນ dk_accounts.sql) */
@@ -3037,7 +3097,7 @@ async function authCheck(){
   if(!tk) return authKick('none');
   try{
     const r=await rpc('dk_check',{p_token:tk});
-    if(r&&r.ok){authExp=r.exp||0;authOff=r.now-Date.now();const un=$('#uname');if(un)un.textContent=r.user;try{localStorage.setItem('dekma_user',r.user)}catch(e){}applyAdminVisibility(r.user);renderMyAccount();loadHomeStats();return}
+    if(r&&r.ok){authExp=r.exp||0;authOff=r.now-Date.now();const un=$('#uname');if(un)un.textContent=r.user;try{localStorage.setItem('dekma_user',r.user)}catch(e){}applyAdminVisibility(r.user);renderMyAccount();loadHomeStats();walletLoad();productsLoad();return}
     if(r&&r.code) authKick(r.code); /* ເຕະອອກສະເພາະເມື່ອເຊີບເວີບອກຊັດເຈນ */
   }catch(e){
     /* ເນັດຫຼຸດ/ເຊີບເວີຊ້າ = ຫ້າມເຕະອອກ · ຍົກເວັ້ນ offline ຫຼັງໝົດເວລາແລ້ວ >60 ວິ */
@@ -3063,6 +3123,32 @@ async function loadHomeStats(){
   finally{ statsBusy=false }
 }
 setInterval(loadHomeStats,30000);
+
+/* ---- ສິນຄ້າ: ດຶງຈາກຖານຂໍ້ມູນຈິງ (products / product_durations / product_keys) ---- */
+let productsBusy=false;
+async function productsLoad(){
+  if(productsBusy) return; productsBusy=true;
+  let tk=null; try{tk=localStorage.getItem('dekma_token')}catch(e){}
+  if(!tk){productsBusy=false;return}
+  try{
+    const r=window.__isAdmin?await adm('prod_list'):await rpc('dk_products_public',{p_token:tk});
+    if(r&&r.ok){
+      const items=r.items||[];
+      DB.products=items.map(pr=>{
+        const durs=(pr.durations||[]).map(d=>({id:d.id,label:d.label,price:realInt(d.price),stock:d.stock||0}));
+        const stock=durs.reduce((a,d)=>a+d.stock,0);
+        return {id:pr.id,code:pr.slug||'',name:pr.name,cat:pr.category||(DB.cats[0]||''),
+          price:durs.length?durs[0].price:0,stock,desc:pr.description||'',
+          imgs:pr.icon_url?[pr.icon_url]:[],keys:[],auto:true,durs,keysByDur:{}};
+      });
+      DB.products.forEach(p=>{p.durs.forEach(d=>{p.keysByDur[d.label]=p.keysByDur[d.label]||[]})});
+      DB.cats=Array.from(new Set([...(DB.cats||[]),...DB.products.map(p=>p.cat).filter(Boolean)]));
+      try{renderCats()}catch(e){} try{renderP()}catch(e){} try{renderAdmin()}catch(e){}
+    }
+  }catch(e){ /* ເນັດຫຼຸດ: ໃຊ້ຂໍ້ມູນເກົ່າໄວ້ກ່ອນ ລອງໃໝ່ຮອບຕໍ່ໄປ */ }
+  finally{ productsBusy=false }
+}
+setInterval(productsLoad,30000);
 function authLogout(){
   let tk=null; try{tk=localStorage.getItem('dekma_token')}catch(e){}
   try{localStorage.removeItem('dekma_token');localStorage.removeItem('dekma_user')}catch(e){}
@@ -3092,7 +3178,7 @@ function admToken(){ try{return localStorage.getItem('dekma_token')||''}catch(e)
 /* ---- ແອດມິນ: ຄຳຂໍເຕີມເງິນ (ອະນຸມັດ/ປະຕິເສດ ຈາກສະລິບ) ---- */
 async function tpBadgeRefresh(){
   if(!window.__isAdmin) return;
-  let r=null; try{r=await adm('topups_list',{status:'pending'})}catch(e){}
+  let r=null; try{r=await admTopups()}catch(e){}
   const n=(r&&r.ok&&r.items)?r.items.length:0;
   const b=$('#tpBadge'); if(b){b.hidden=!n;b.textContent=n>99?'99+':n}
 }
@@ -3107,7 +3193,7 @@ function tpRow(t){
 async function topupsLoad(){
   const list=$('#tpList'),count=$('#tpCount'); if(!list) return;
   count.textContent='ກຳລັງໂຫຼດ...';
-  let r=null; try{r=await adm('topups_list',{status:'pending'})}catch(e){}
+  let r=null; try{r=await admTopups()}catch(e){}
   if(!r||!r.ok){count.textContent='ໂຫຼດບໍ່ໄດ້ ລອງໃໝ່';list.innerHTML='';return}
   const items=r.items||[];
   count.textContent=items.length?`ລໍຖ້າອະນຸມັດ ${items.length} ລາຍການ`:'ບໍ່ມີຄຳຂໍເຕີມເງິນຄ້າງໄວ້';
@@ -3120,11 +3206,16 @@ $('#ap-topups')?.addEventListener('click',async e=>{
   const approve=b.dataset.act==='approve';
   item.classList.add('busy');
   let r=null; try{r=await rpc('dk_admin_approve_topup',{p_admin_token:admToken(),p_request_id:id,p_approve:approve})}catch(e){}
-  if(r&&r.ok){ say(approve?'ອະນຸມັດແລ້ວ ເຄຣດິດເຂົ້າບັນຊີລູກຄ້າແລ້ວ':'ປະຕິເສດຄຳຂໍນີ້ແລ້ວ'); topupsLoad() }
+  if(r&&r.ok){ say(approve?'ອະນຸມັດແລ້ວ ເຄຣດິດເຂົ້າບັນຊີລູກຄ້າແລ້ວ':'ປະຕິເສດຄຳຂໍນີ້ແລ້ວ'); topupsLoad(); walletLoad() }
   else { item.classList.remove('busy'); say('ດຳເນີນການບໍ່ສຳເລັດ ລອງໃໝ່ອີກຄັ້ງ') }
 });
 setInterval(tpBadgeRefresh,20000);
 
+async function admTopups(){
+  const tk=admToken(); if(!tk) return {ok:false,code:'key'};
+  try{return await rpc('dk_admin_topups',{p_admin_token:tk,p_status:'pending'})}
+  catch(e){return await adm('topups_list',{status:'pending'})} /* ສຳຮອງ: ຖ້າຍັງບໍ່ໄດ້ຣັນ wallet_fix.sql */
+}
 async function adm(action,p){
   const tk=admToken();
   if(!tk) return {ok:false,code:'key'};
@@ -3180,7 +3271,7 @@ $('#amt').addEventListener('input',e=>setAmt(toReal(e.target.value)));
 ['#amt','#crAmt','#rsDurPrice','#ePrice'].forEach(bindMoneyInput);
 $('#pms').addEventListener('click',e=>{const b=e.target.closest('.tu-pm');if(!b)return;$$('.tu-pm').forEach(x=>x.setAttribute('aria-pressed',x===b));pm=b.dataset.pm;$('#tuQr').classList.toggle('on',pm==='BCEL One (LaoQR)')});
 $('#pay').addEventListener('click',()=>amt>0?tuOpen():say('ກະລຸນາລະບຸຈຳນວນເງິນ'));
-$('#hist').innerHTML=[['ເຕີມເງິນຜ່ານ BCEL One','ມື້ນີ້ 09:41',200000],['ເຕີມເງິນຜ່ານ U-Money','ມື້ວານນີ້ 18:20',100000],['ເຕີມເງິນຜ່ານການໂອນທະນາຄານ','3 ມື້ກ່ອນ',500000]].map(r=>feedRow('in',r[0],r[1],'+'+K(r[2]))).join('');
+$('#hist').innerHTML='<p class="note">ກຳລັງໂຫຼດ…</p>'; /* ປະຫວັດຈິງ: histLoad() */
 
 
 /* ===== หน้าแรก: ช่องค้นหา + ปุ่มหมวดหมู่ IOS / ANDROID -> เปิดหน้าสินค้าตามหมวด ===== */
@@ -3679,9 +3770,8 @@ function tuWaiting(reqId){
     let r=null; try{r=await rpc('dk_topup_status',{p_token:admToken(),p_request_id:reqId})}catch(e){return}
     if(!r||!r.ok) return;
     if(r.status==='approved'){
-      clearInterval(tuPoll); clearInterval(tuClock); DB.credit=r.credit; save(); paint();
-      addTx('add',amt,'ເຕີມເງິນຜ່ານ '+pm+' (ແນບສະລິບ)');
-      const hist=$('#hist'); if(hist) hist.insertAdjacentHTML('afterbegin',feedRow('in','ເຕີມເງິນຜ່ານ '+esc(pmShort(pm))+' (ແນບສະລິບ)','ຫາກໍ່ນີ້','+'+K(amt)));
+      clearInterval(tuPoll); clearInterval(tuClock); await walletLoad(true);
+      addTx('add',amt,'ເຕີມເງິນຜ່ານ '+pm+' (ແນບສະລິບ)'); save();
       tuEl.dataset.st='success'; tu.done=true; tuSuccess();
       const f=$('#tuDone'); if(f) f.focus({preventScroll:true});
     }else if(r.status==='rejected'){
