@@ -218,6 +218,10 @@ h1{position:relative;margin:1.6rem 0 0;font-size:2.8rem;line-height:3.1rem;font-
 /* ===== Sliding spotlight + light-trail (smooth, fluid) ===== */
 .nav{--idx:0}
 .nav-spot{position:absolute;top:0;left:.6rem;width:calc((100% - 1.2rem)/5);height:100%;pointer-events:none;transform:translate3d(calc(var(--idx) * 100%),0,0);transition:transform .55s cubic-bezier(.22,1,.36,1);z-index:0;will-change:transform}
+/* เมนูล่างไม่มีแท็บ "แอดมิน" (.no-admin) เหลือ 4 ช่องแทน 5 ช่อง แต่ .nav-spot เดิมกว้างคงที่ 1/5 เสมอ
+   ทำให้เส้น/แสงใต้ไอคอนเลื่อนไปไม่ตรงกับไอคอนที่เลือก (บั๊กที่เห็นในภาพ) — แก้โดยปรับความกว้างให้ตรงกับ
+   จำนวนช่องจริงเมื่ออยู่ในโหมด no-admin */
+.nav.no-admin .nav-spot{width:calc((100% - 1.2rem)/4)}
 .nav-spot::before{content:"";position:absolute;top:.2rem;left:50%;width:6.4rem;height:6.4rem;margin-left:-3.2rem;border-radius:50%;background:radial-gradient(circle,rgba(255,31,66,.32),transparent 72%);filter:blur(.15rem);animation:spotBreathe 3.2s ease-in-out infinite}
 .nav-spot::after{content:"";position:absolute;top:-.16rem;left:50%;width:3.4rem;height:.3rem;margin-left:-1.7rem;border-radius:1rem;background:#ff1f42;box-shadow:0 0 1.4rem .2rem rgba(255,31,66,.85),0 0 3rem .5rem rgba(255,31,66,.4)}
 @keyframes spotBreathe{0%,100%{opacity:.8;transform:scale(.98)}50%{opacity:1;transform:scale(1.04)}}
@@ -865,6 +869,26 @@ button.bdg:active{transform:scale(.94)}button.bdg:hover{filter:brightness(1.2)}
 @keyframes tuOkIn{from{opacity:0;transform:translateY(.5rem)}to{opacity:1;transform:none}}
 .tu-slip-ok svg{width:1.4rem;height:1.4rem;color:#4ade80}
 @media (prefers-reduced-motion:reduce){.tu-slip-ic,.tu-slip-preview,.tu-slip-ok{animation:none}}
+
+/* ===== ตัวเลือกแนบสลิป: ถ่ายรูป / คลังภาพ ===== */
+.tu-sheet{position:absolute;inset:0;z-index:30;display:flex;align-items:flex-end;justify-content:center;pointer-events:none}
+.tu-sheet.show{pointer-events:auto}
+.tu-sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .28s var(--om-ease)}
+.tu-sheet.show .tu-sheet-bg{opacity:1}
+.tu-sheet-card{position:relative;width:100%;max-width:42.8rem;box-sizing:border-box;padding:1.6rem 1.6rem calc(1.6rem + env(safe-area-inset-bottom,0px));
+  border-radius:2rem 2rem 0 0;background:linear-gradient(170deg,#170a0b,#0a0505);border:max(1px,.15rem) solid rgba(255,79,106,.3);border-bottom:0;
+  box-shadow:0 -1rem 3rem rgba(0,0,0,.5);transform:translateY(100%);transition:transform .32s var(--om-ease)}
+.tu-sheet.show .tu-sheet-card{transform:translateY(0)}
+.tu-sheet-title{margin:0 0 1.2rem;text-align:center;font-size:1.3rem;font-weight:700;color:var(--om-mute)}
+.tu-sheet-opt{display:flex;align-items:center;gap:1.2rem;width:100%;padding:1.4rem 1.3rem;margin-bottom:.9rem;border-radius:1.6rem;
+  border:max(1px,.15rem) solid rgba(255,255,255,.1);background:rgba(255,255,255,.045);text-align:left;transition:background .2s,transform .2s var(--om-ease)}
+.tu-sheet-opt:active{transform:scale(.98);background:rgba(255,79,106,.12)}
+.tu-sheet-ic{flex:none;display:grid;place-items:center;width:4rem;height:4rem;border-radius:1.1rem;color:#ff8fa3;background:rgba(255,79,106,.14);border:max(1px,.14rem) solid rgba(255,79,106,.4)}
+.tu-sheet-ic svg{width:2rem;height:2rem}
+.tu-sheet-opt span:last-child{font-size:1.45rem;font-weight:700}
+.tu-sheet-cancel{width:100%;padding:1.3rem;border-radius:1.6rem;background:rgba(255,255,255,.06);color:var(--om-mute);font-size:1.4rem;font-weight:700;text-align:center}
+.tu-sheet-cancel:active{background:rgba(255,255,255,.11)}
+@media (prefers-reduced-motion:reduce){.tu-sheet-bg,.tu-sheet-card{transition:none}}
 
 /* =====================================================================
    ORDER CONFIRM MODAL · ຢືນຢັນຄຳສັ່ງຊື້   (ทุก selector ขึ้นต้นด้วย om- — ไม่แตะ style เดิม)
@@ -1738,7 +1762,7 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
   <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linejoin="round"/></symbol>
   <symbol id="i-cart" viewBox="0 0 24 24"><path d="M2.5 3h2.4l1 3M5.9 6l2 9.5a2 2 0 0 0 2 1.6h7a2 2 0 0 0 2-1.6L20.5 8H5.9" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.5" r="1.500"/><circle cx="17" cy="20.5" r="1.500"/></symbol>
   <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 21V9M9.5 21V3M16 21v-7M21 21H3" fill="none" stroke="currentColor" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="7" height="7" rx="1.200" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14.5" y="2.5" width="7" height="7" rx="1.200" fill="none" stroke="currentColor" stroke-width="2"/><rect x="2.5" y="14.5" width="7" height="7" rx="1.200" fill="none" stroke="currentColor" stroke-width="2"/><rect x="5.3" y="5.3" width="1.8" height="1.8"/><rect x="17.3" y="5.3" width="1.8" height="1.8"/><rect x="5.3" y="17.3" width="1.8" height="1.8"/><rect x="14.5" y="14.5" width="3.1" height="3.1"/><rect x="18.7" y="14.5" width="2.8" height="2.8"/><rect x="14.5" y="18.7" width="2.8" height="2.8"/><rect x="18.7" y="18.7" width="2.3" height="2.3"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="2.2" y="2.2" width="7.6" height="7.6" rx="2.1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="4.85" y="4.85" width="2.3" height="2.3" rx=".6"/><rect x="14.2" y="2.2" width="7.6" height="7.6" rx="2.1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="16.85" y="4.85" width="2.3" height="2.3" rx=".6"/><rect x="2.2" y="14.2" width="7.6" height="7.6" rx="2.1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="4.85" y="16.85" width="2.3" height="2.3" rx=".6"/><rect x="14.2" y="14.2" width="3.1" height="3.1" rx=".8"/><rect x="18.7" y="14.2" width="3.1" height="3.1" rx=".8"/><rect x="14.2" y="18.7" width="3.1" height="3.1" rx=".8"/><rect x="18.7" y="18.7" width="3.1" height="3.1" rx=".8" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
   <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="1.5" width="12" height="21" rx="2.600" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 19.2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10.5" r="2.8" fill="var(--slit,#0a0505)" stroke="currentColor" stroke-width="1.6"/></symbol>
   <symbol id="i-bank" viewBox="0 0 24 24"><path d="M12 2 2 7.5v1.7h20V7.5z"/><path d="M4 10.5v8M9 10.5v8M15 10.5v8M20 10.5v8" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"/><rect x="2" y="19.5" width="20" height="2.200" rx="1"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.200" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 6.8V12l3.6 2.2" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -2180,6 +2204,18 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
     <div class="om-scroll" id="tuScroll"></div>
     <div class="om-foot" id="tuFoot"></div>
     <div class="om-edge" aria-hidden="true"></div>
+    <!-- ตัวเลือกแนบสลิป: กล้อง / คลังภาพ (แทนที่การกดแล้วเข้ากล่องเลือกไฟล์ตรงๆ) -->
+    <input type="file" id="tuSlipInputCam" accept="image/*" capture="environment" hidden>
+    <input type="file" id="tuSlipInputLib" accept="image/*" hidden>
+    <div class="tu-sheet" id="tuSlipSheet" hidden>
+      <div class="tu-sheet-bg" data-sheetclose></div>
+      <div class="tu-sheet-card" role="menu" aria-label="ເລືອກວິທີແນບສະລິບ">
+        <p class="tu-sheet-title">ແນບສະລິບການໂອນເງິນ</p>
+        <button type="button" class="tu-sheet-opt" data-pick="cam"><span class="tu-sheet-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></span><span>ຖ່າຍຮູບ</span></button>
+        <button type="button" class="tu-sheet-opt" data-pick="lib"><span class="tu-sheet-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M4 16.5l4.8-4.8a1.5 1.5 0 0 1 2.1 0l2.2 2.2 3-3a1.5 1.5 0 0 1 2.1 0l1.8 1.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>ເລືອກຈາກຄັງຮູບ</span></button>
+        <button type="button" class="tu-sheet-cancel" data-sheetclose>ຍົກເລີກ</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -3613,12 +3649,11 @@ function tuReview(){
         <div class="om-row om-total"><span>ຍອດທີ່ຕ້ອງຊຳລະ</span><b>${K(amt)}</b></div>
       </div>
       <div class="tu-slip om-in" style="--i:5">
-        <label class="tu-slip-drop" id="tuSlipDrop"${tu.slip?' hidden':''}>
-          <input type="file" id="tuSlipInput" accept="image/*" capture="environment" hidden>
+        <button type="button" class="tu-slip-drop" id="tuSlipDrop"${tu.slip?' hidden':''}>
           <span class="tu-slip-ic"><svg aria-hidden="true"><use href="#i-up"/></svg></span>
           <b>ແນບສະລິບການໂອນເງິນ</b>
           <span>ແຕະເພື່ອເລືອກຮູບ ຫຼືຖ່າຍຮູບສະລິບ</span>
-        </label>
+        </button>
         <div class="tu-slip-preview" id="tuSlipPreview"${tu.slip?'':' hidden'}>
           ${tu.slip?`<img src="${tu.slip}" alt="ສະລິບການໂອນເງິນ">`:''}
           <button type="button" class="tu-slip-rm" id="tuSlipRemove" aria-label="ລຶບຮູບ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -3790,14 +3825,31 @@ function tuRejected(){
   tuFoot.innerHTML=`<div class="rs" style="--i:3"><button class="om-cta" type="button" data-tuclose>${OM_TICK}<span>ປິດ</span></button></div>`;
 }
 
+/* ---- ตัวเลือกแนบสลิป: ถ่ายรูป / คลังภาพ ---- */
+const tuSheet=$('#tuSlipSheet');
+function tuSheetOpen(){ tuSheet.hidden=false; void tuSheet.offsetWidth; tuSheet.classList.add('show'); }
+function tuSheetClose(){
+  tuSheet.classList.remove('show');
+  setTimeout(()=>{ tuSheet.hidden=true; },280);
+}
+
 tuEl.addEventListener('click',e=>{
   const t=e.target;
+  if(t.closest('#tuSlipDrop')) return tuSheetOpen();
   if(t.closest('#tuSlipRemove')) return tuSetSlip(null);
   const run=t.closest('#tuGo'); if(run) return tuRun(run);
+  const pick=t.closest('[data-pick]');
+  if(pick){
+    tuSheetClose();
+    const inp=pick.dataset.pick==='cam'?$('#tuSlipInputCam'):$('#tuSlipInputLib');
+    setTimeout(()=>inp&&inp.click(),260);
+    return;
+  }
+  if(t.closest('[data-sheetclose]')&&!tuSheet.hidden) return tuSheetClose();
   if(t.closest('[data-tuclose]')) return tuClose();
 });
 tuEl.addEventListener('change',e=>{
-  if(e.target.id!=='tuSlipInput') return;
+  if(e.target.id!=='tuSlipInputCam'&&e.target.id!=='tuSlipInputLib') return;
   const f=e.target.files&&e.target.files[0];
   if(f) tuPickFile(f);
   e.target.value='';
@@ -3806,7 +3858,11 @@ tuEl.addEventListener('change',e=>{
 /* Esc = ปิด · Tab วนอยู่ใน modal (focus trap) */
 document.addEventListener('keydown',e=>{
   if(!tu.open) return;
-  if(e.key==='Escape'){if(!tu.busy){e.preventDefault();tuClose()}return}
+  if(e.key==='Escape'){
+    if(tuSheet&&!tuSheet.hidden){e.preventDefault();tuSheetClose();return}
+    if(!tu.busy){e.preventDefault();tuClose()}
+    return;
+  }
   if(e.key!=='Tab') return;
   const f=[...tuEl.querySelectorAll('button:not([disabled]),label:not([hidden])')].filter(x=>x.getClientRects().length);
   if(!f.length){e.preventDefault();tuCard.focus();return}
