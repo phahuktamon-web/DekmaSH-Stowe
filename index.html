@@ -1808,7 +1808,6 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
 
 <!-- ===== สินค้า ===== -->
 <div class="view" id="v-products">
-  <div class="pg"><button class="back" data-go="home" aria-label="ກັບຄືນ"><svg><use href="#i-back"/></svg></button><div><h2>ສິນຄ້າທັງໝົດ</h2><small id="pcount"> </small></div></div>
   <div class="search"><input class="field" id="pq" style="padding-left:1.6rem" placeholder="ຄົ້ນຫາຊື່ສິນຄ້າ, ໂປຣແກຣມ, ຫຼື ໝວດໝູ່..." autocomplete="off" aria-label="ຄົ້ນຫາສິນຄ້າ"><button type="button" class="search-clear" aria-label="ລ້າງຄຳຄົ້ນຫາ" tabindex="-1"><i></i><i></i></button></div>
   <div class="cats" id="cats"></div>
   <div class="grid2" id="plist"></div>
@@ -1816,7 +1815,6 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
 
 <!-- ===== เติมเงิน ===== -->
 <div class="view" id="v-topup">
-  <div class="pg"><button class="back" data-go="home" aria-label="ກັບຄືນ"><svg><use href="#i-back"/></svg></button><div><h2>ເຕີມເງິນເຄຣດິດ</h2><small>ເຕີມແລ້ວ ເຄຣດິດເຂົ້າທັນທີ</small></div></div>
   <div class="stack">
     <div class="card bal tu-bal">
       <span class="tu-bal-ic"><svg><use href="#i-wallet"/></svg></span>
@@ -1862,7 +1860,6 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
 
 <!-- ===== เมนู ===== -->
 <div class="view" id="v-menu">
-  <div class="pg"><button class="back" data-go="home" aria-label="ກັບຄືນ"><svg><use href="#i-back"/></svg></button><div><h2>ເມນູ</h2><small>ບັນຊີ ແລະ ການຕັ້ງຄ່າ</small></div></div>
   <div class="stack">
     <div class="card" style="display:flex;align-items:center;gap:1.6rem"><span class="av">ຕທ</span><div><p style="font-size:1.8rem;font-weight:700" id="uname"></p><p class="lb" style="letter-spacing:0">ຕົວແທນຈຳໜ່າຍ</p></div><button class="btn b3" data-go="topup" style="margin-left:auto;height:3.4rem"><svg><use href="#i-wallet"/></svg><span id="ucredit"></span></button></div>
     <div class="card" style="padding:.6rem 1.6rem">
@@ -1938,7 +1935,6 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
 </div>
 <!-- ===== แอดมิน ===== -->
 <div class="view" id="v-admin">
-  <div class="pg"><button class="back" data-go="home" aria-label="ກັບຄືນ"><svg><use href="#i-back"/></svg></button><div><h2>ແອດມິນ</h2><small>ຈັດການໝວດໝູ່ · ສິນຄ້າ · ບັນຊີລູກຄ້າ · ຊື່ຮ້ານ</small></div></div>
 
   <div class="ad-tabs" id="adTabs" role="tablist" aria-label="ເມນູແອດມິນ"><div class="ad-tabs-in">
     <i class="ad-ind" id="adInd"></i>
@@ -2242,7 +2238,7 @@ document.addEventListener('touchend',e=>{
 const scrollWrap=$('#scrollWrap');
 function scrollTopReset(){ if(scrollWrap) scrollWrap.scrollTop=0; window.scrollTo(0,0); }
 const toast=$('#toast'); let tt;
-function say(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),1900)}
+function say(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),Math.max(1900,Math.min(6000,m.length*55)))}
 const overlay=$('#cineOverlay');
 function show(v){
   if(v==='admin'&&!window.__isAdmin) v='home';
@@ -2375,7 +2371,7 @@ function posCatInd(){const b=$('#cats .cat.on'),i=$('#catInd'),bar=$('#cats');if
   bar.scrollTo({left:Math.max(0,b.offsetLeft-(bar.clientWidth-b.offsetWidth)/2),behavior:RM?'auto':'smooth'})}
 function renderP(){
   const l=DB.products.filter(p=>(cat==='ທັງໝົດ'||p.cat===cat)&&(!only||p.stock>0)&&(p.name+p.cat+p.code).toLowerCase().includes(pq));
-  $('#pcount').textContent='ສະແດງ '+l.length+' ຈາກ '+DB.products.length+' ລາຍການ';
+  const pc=$('#pcount'); if(pc) pc.textContent='ສະແດງ '+l.length+' ຈາກ '+DB.products.length+' ລາຍການ';
   if(!DB.products.length){ /* ยังไม่มีสินค้า = ไม่แสดงการ์ดใดๆ (แอดมินเพิ่มเอง) */
     $('#plist').innerHTML='';
     return;
@@ -2811,21 +2807,28 @@ $('#rsGo').addEventListener('click',async()=>{
     go.disabled=true;
     if(rs.dur==='__new__'){
       if(!durLabel){go.disabled=false;return say('ໃສ່ຊື່ໄລຍະເວລາໃໝ່ກ່ອນ')}
-      const dr=await adm('dur_upsert',{product_id:p.id,label:durLabel,price:Math.max(0,toReal($('#rsDurPrice').value))}).catch(()=>null);
-      if(!dr||!dr.ok){go.disabled=false;return say('ສ້າງໄລຍະເວລາໃໝ່ບໍ່ສຳເລັດ')}
+      let drErr='';
+      const dr=await adm('dur_upsert',{product_id:p.id,label:durLabel,price:Math.max(0,toReal($('#rsDurPrice').value))}).catch(e=>{drErr=(e&&e.message)||'';return null});
+      if(!dr||!dr.ok){go.disabled=false;return say('ສ້າງໄລຍະເວລາໃໝ່ບໍ່ສຳເລັດ'+(drErr||(dr&&(dr.msg||dr.code))?' · '+(drErr||dr.msg||dr.code):''))}
       durId=dr.id; p.durs.push({id:durId,label:durLabel,price:Math.max(0,toReal($('#rsDurPrice').value)),stock:0}); p.keysByDur[durLabel]=[];
     }else{
       const dObj=(p.durs||[]).find(d=>d.label===durLabel); durId=dObj&&dObj.id;
     }
     if(!durId){go.disabled=false;return say('ບໍ່ພົບໄລຍະເວລານີ້ໃນຖານຂໍ້ມູນ')}
-    const kr=await adm('keys_add',{duration_id:durId,codes:c.add.join('\n')}).catch(()=>null);
+    let krErr='';
+    const kr=await adm('keys_add',{duration_id:durId,codes:c.add.join('\n')}).catch(e=>{krErr=(e&&e.message)||'';return null});
     go.disabled=false;
-    if(!kr||!kr.ok) return say('ບັນທຶກລະຫັດລົງຖານຂໍ້ມູນບໍ່ສຳເລັດ');
+    if(!kr||!kr.ok){
+      go.disabled=false;
+      if(kr&&kr.code==='dup') return say('ລະຫັດທັງໝົດທີ່ວາງມາ ມີຢູ່ໃນລະບົບແລ້ວ (ໃຊ້ໄປແລ້ວ ຫຼືເພີ່ມໄວ້ກ່ອນໜ້ານີ້) ກະລຸນາໃຊ້ລະຫັດອື່ນ');
+      return say('ບັນທຶກລະຫັດລົງຖານຂໍ້ມູນບໍ່ສຳເລັດ'+(krErr||(kr&&(kr.msg||kr.code))?' · '+(krErr||kr.msg||kr.code):''));
+    }
     n=kr.added||c.add.length; rs.dur=durLabel||'';
     addLog(p,rs.mode,n);
     $('#rsKeys').value='';$('#rsQty').value='';
     await productsLoad();
-    renderAdmin();rsSync();burst('+'+n,p.name+' · ເຫຼືອ '+(rsProd()?rsProd().stock:0));
+    renderAdmin();rsSync();
+    burst('+'+n,p.name+' · ເຫຼືອ '+(rsProd()?rsProd().stock:0)+(kr.skipped?' · ຂ້າມ '+kr.skipped+' ລະຫັດທີ່ມີຢູ່ແລ້ວ':''));
   }else{
     if(p.auto||!c.n) return say('ກະລຸນາໃສ່ຈຳນວນ');
     p.stock+=c.n;n=c.n;
@@ -3082,7 +3085,12 @@ const SB_URL='https://zjmwukvfqmgxnidwibmr.supabase.co';
 const SB_KEY='sb_publishable_K7I7yfCogfeWl0FpFZ2rHQ_G2t3CPld';
 async function rpc(fn,args){
   const r=await fetch(SB_URL+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify(args)});
-  if(!r.ok) throw new Error('http '+r.status);
+  if(!r.ok){
+    let detail='';
+    try{const j=await r.json();detail=j&&(j.message||j.msg||j.error||j.hint||JSON.stringify(j))||''}
+    catch(e){try{detail=await r.text()}catch(e2){}}
+    throw new Error('http '+r.status+(detail?': '+detail:''));
+  }
   return r.json();
 }
 
