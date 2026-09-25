@@ -417,7 +417,8 @@ body.transitioning .pm,body.transitioning .nav,body.transitioning .sh-box{
 .pcard:active .cv::after{transform:translateX(130%)}
 .pcard:active .cv img{transform:scale(1.03)}
 .cv .cb,.cv .tag{position:absolute;z-index:3;top:.8rem;background:rgba(10,5,5,.62)}
-.cv .cb{left:.8rem;padding:.2rem .8rem;border-radius:99rem;color:#f2e9ea;font-size:1.1rem;font-weight:600;border:1px solid rgba(255,255,255,.14)}
+.cv .cb{left:.8rem;padding:.2rem .8rem;border-radius:99rem;color:#f2e9ea;font-size:1.1rem;font-weight:600;border:1px solid rgba(255,255,255,.14);display:inline-flex;align-items:center;gap:.4rem}
+.cv .cb svg{width:1.1rem;height:1.1rem;flex:none}
 .cv .tag{right:.8rem}
 .c1{--g1:#CD0023;--g2:#2a070d}.c2{--g1:#3b8fe0;--g2:#122a45}.c3{--g1:#e0a020;--g2:#3a2818}.c4{--g1:#27b76a;--g2:#12302e}
 .line{display:flex;gap:.9rem;align-items:center}.line .field{flex:1;min-width:0}.line .code{flex:1;min-width:0}.line .btn{height:4.9rem;border-radius:1.8rem}
@@ -1038,9 +1039,9 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
   box-shadow:0 1.4rem 3.2rem -1.2rem rgba(0,0,0,.55),inset 0 .1rem 0 rgba(255,255,255,.08)}
 .om.show .om-hero{animation:omHeroIn .7s var(--om-ease) .04s both}
 @keyframes omHeroIn{from{opacity:0;filter:blur(6px);transform:scale(.9) translateY(1.2rem)}to{opacity:1;filter:blur(0);transform:none}}
-.om-hero img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover;transform:scale(1.03);
-  animation:omHeroZoom 9s ease-out both}
-@keyframes omHeroZoom{from{transform:scale(1.16)}to{transform:scale(1.03)}}
+.om-hero img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:contain;
+  animation:omHeroFade .5s ease-out both}
+@keyframes omHeroFade{from{opacity:0}to{opacity:1}}
 .om-hero .om-hero-ico{position:absolute;inset:0;z-index:1;display:grid;place-items:center}
 .om-hero .om-hero-ico svg{width:5.4rem;height:5.4rem;color:#fff;filter:drop-shadow(0 .7rem 1.6rem rgba(0,0,0,.45));
   animation:omIconFloat 3.4s ease-in-out .5s infinite}
@@ -1060,6 +1061,7 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
 .om-hero-info b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   font-size:1.75rem;font-weight:700;line-height:2.3rem;text-shadow:0 .3rem 1rem rgba(0,0,0,.55)}
 .om-hero-info .om-cat{margin-top:.5rem}
+.om-desc{margin:1.1rem 0 0;padding:0 .2rem;color:var(--muted,#a99);font-size:1.35rem;line-height:1.95rem;white-space:pre-wrap}
 
 /* --- Duration selector (7 / 14 / 30 ມື້) --- */
 .om-dur-lbl{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem;color:var(--om-mute);font-size:1.25rem;font-weight:600;letter-spacing:.03em}
@@ -2378,7 +2380,7 @@ const openSheet=h=>{box.innerHTML=h;sheet.classList.add('on')}, closeSheet=()=>s
 
 /* ----- สินค้า (ฝั่งลูกค้า) ----- */
 let cat='ທັງໝົດ',only=false,pq='';
-function renderCats(){renderHomeCats();$('#cats').innerHTML='<i class="cat-ind" id="catInd"></i>'+['ທັງໝົດ',...DB.cats].map((c,i)=>`<button class="cat${c===cat?' on':''}" data-cat="${esc(c)}" style="--k:${i}">${esc(c)}</button>`).join('')+`<button class="cat" id="onlyStock" aria-pressed="${only}" style="--k:${DB.cats.length+1}">ສະເພາະທີ່ມີສະຕັອກ</button>`;posCatInd()}
+function renderCats(){renderHomeCats();$('#cats').innerHTML='<i class="cat-ind" id="catInd"></i>'+['ທັງໝົດ',...DB.cats].map((c,i)=>`<button class="cat${c===cat?' on':''}" data-cat="${esc(c)}" style="--k:${i};display:inline-flex;align-items:center;gap:.6rem">${c==='ທັງໝົດ'?'<svg style="width:1.3rem;height:1.3rem"><use href="#i-grid"/></svg>':`<svg style="width:1.3rem;height:1.3rem"><use href="#${catIcon(c)}"/></svg>`}<span>${esc(c)}</span></button>`).join('')+`<button class="cat" id="onlyStock" aria-pressed="${only}" style="--k:${DB.cats.length+1}">ສະເພາະທີ່ມີສະຕັອກ</button>`;posCatInd()}
 /* แผ่นไฟใต้หมวดหมู่ที่เลือกอยู่ (เหมือน posInd() ของแท็บแอดมิน) */
 function posCatInd(){const b=$('#cats .cat.on'),i=$('#catInd'),bar=$('#cats');if(!b||!i||!b.offsetWidth)return;
   i.style.width=b.offsetWidth+'px';i.style.transform='translateX('+b.offsetLeft+'px)';
@@ -2390,7 +2392,7 @@ function renderP(){
     $('#plist').innerHTML='';
     return;
   }
-  $('#plist').innerHTML=l.map((p,i)=>`<div class="card pcard${p.stock?'':' soldout'}${p.stock>0&&p.stock<=5&&p.stock<UNL?' low':''}" style="--n:${Math.min(i,9)}"><div class="cv c${i%4+1}" data-pid="${p.id}" data-i="0">${p.imgs[0]?`<img src="${p.imgs[0]}" alt="">`:''}<svg class="g"><use href="#${sym(p)}"/></svg><span class="pc-orb" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="pc-glare" aria-hidden="true"></span><span class="cb">${esc(p.cat)}</span>${p.stock<UNL?`<span class="tag ${p.stock?'':'out'}">${p.stock?'ເຫຼືອ '+p.stock:'ໝົດ'}</span>`:''}${p.imgs.length>1?`<span class="pc-dots" aria-hidden="true">${p.imgs.map((_,k)=>`<i${k?'':' class="on"'}></i>`).join('')}</span>`:''}${p.stock?'':'<span class="pc-sold" aria-hidden="true">ໝົດແລ້ວ</span>'}</div><div class="pb"><p class="pn">${esc(p.name)}</p>${p.desc?`<p class="pd">${esc(p.desc)}</p>`:''}<span class="price">${pMulti(p)?'<small class="pfrom">ເລີ່ມ</small>':''}₭<span class="pv" data-v="${pMin(p)}">${fmt(pMin(p))}</span></span></div><button class="buy" data-buy="${p.id}" ${p.stock?'':'disabled'}>${p.stock?'<svg aria-hidden="true"><use href="#i-cart"/></svg><span>ສັ່ງຊື້</span>':'<span>ສິນຄ້າໝົດ</span>'}</button><span class="pc-edge" aria-hidden="true"></span></div>`).join('')||'<p class="empty">ບໍ່ພົບສິນຄ້າທີ່ຄົ້ນຫາ</p>';
+  $('#plist').innerHTML=l.map((p,i)=>`<div class="card pcard${p.stock?'':' soldout'}${p.stock>0&&p.stock<=5&&p.stock<UNL?' low':''}" style="--n:${Math.min(i,9)}"><div class="cv c${i%4+1}" data-pid="${p.id}" data-i="0">${p.imgs[0]?`<img src="${p.imgs[0]}" alt="">`:''}<svg class="g"><use href="#${sym(p)}"/></svg><span class="pc-orb" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="pc-glare" aria-hidden="true"></span><span class="cb"><svg><use href="#${catIcon(p.cat)}"/></svg>${esc(p.cat)}</span>${p.stock<UNL?`<span class="tag ${p.stock?'':'out'}">${p.stock?'ເຫຼືອ '+p.stock:'ໝົດ'}</span>`:''}${p.imgs.length>1?`<span class="pc-dots" aria-hidden="true">${p.imgs.map((_,k)=>`<i${k?'':' class="on"'}></i>`).join('')}</span>`:''}${p.stock?'':'<span class="pc-sold" aria-hidden="true">ໝົດແລ້ວ</span>'}</div><div class="pb"><p class="pn">${esc(p.name)}</p>${p.desc?`<p class="pd">${esc(p.desc)}</p>`:''}<span class="price">${pMulti(p)?'<small class="pfrom">ເລີ່ມ</small>':''}₭<span class="pv" data-v="${pMin(p)}">${fmt(pMin(p))}</span></span></div><button class="buy" data-buy="${p.id}" ${p.stock?'':'disabled'}>${p.stock?'<svg aria-hidden="true"><use href="#i-cart"/></svg><span>ສັ່ງຊື້</span>':'<span>ສິນຄ້າໝົດ</span>'}</button><span class="pc-edge" aria-hidden="true"></span></div>`).join('')||'<p class="empty">ບໍ່ພົບສິນຄ້າທີ່ຄົ້ນຫາ</p>';
 }
 $('#cats').addEventListener('click',e=>{
   const c=e.target.closest('.cat'); if(!c) return;
@@ -3437,6 +3439,7 @@ function omReview(p){
         <span class="om-hero-qty" id="omHeroQty">x${om.qty}</span>
         <div class="om-hero-info"><b>${esc(p.name)}</b><span class="om-cat">${esc(p.cat)}</span></div>
       </div>
+      ${p.desc?`<p class="om-desc om-in" style="--i:3">${esc(p.desc)}</p>`:''}
       <div class="om-dur om-in" style="--i:4"${durOpts(p)[0].solo?' hidden':''}>
         <span class="om-dur-lbl"><svg aria-hidden="true"><use href="#i-clock"/></svg>ເລືອກໄລຍະເວລາ</span>
         <div class="om-dur-grid" id="omDurGrid">
