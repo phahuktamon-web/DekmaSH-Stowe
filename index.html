@@ -189,6 +189,12 @@ h1{position:relative;margin:1.6rem 0 0;font-size:2.8rem;line-height:3.1rem;font-
 .tile svg{width:1.6rem;height:1.6rem}
 .tile.ios{color:#f2e9ea;background:linear-gradient(145deg,#3a2a2c,#1a1112);border-color:rgba(255,255,255,.22);box-shadow:0 0 1rem rgba(255,255,255,.1)}
 .tile.and{--slit:#0f2a1c;color:#3ddc84;background:linear-gradient(145deg,#153a25,#0f2a1c);border-color:#1f6a3f;box-shadow:0 0 1rem rgba(61,220,132,.3)}
+.tile.gen{color:#ff8c9c;background:linear-gradient(145deg,#3a1420,#1a0a10);border-color:rgba(255,90,110,.35);box-shadow:0 0 1rem rgba(255,90,110,.18)}
+.icoPick{display:flex;flex-wrap:wrap;gap:.7rem;margin:.4rem 0 1rem}
+.icoPick button{width:3rem;height:3rem;border-radius:1rem;border:max(1px,.14rem) solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);display:grid;place-items:center;color:#cfc4c4}
+.icoPick button svg{width:1.6rem;height:1.6rem}
+.icoPick button.on{border-color:#ff4d6a;color:#ff4d6a;background:rgba(255,77,106,.14);box-shadow:0 0 1rem rgba(255,77,106,.25)}
+.cat-ico-set{padding:.9rem 0 .2rem}
 .chip:hover{background:rgba(205,0,35,.22);box-shadow:0 0 1.6rem rgba(205,0,35,.35)}
 .chip:active{transform:scale(.97)}
 
@@ -1769,6 +1775,11 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
   <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 21V9M9.5 21V3M16 21v-7M21 21H3" fill="none" stroke="currentColor" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-qr" viewBox="0 0 24 24"><rect x="2.2" y="2.2" width="7.6" height="7.6" rx="2.1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="4.85" y="4.85" width="2.3" height="2.3" rx=".6"/><rect x="14.2" y="2.2" width="7.6" height="7.6" rx="2.1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="16.85" y="4.85" width="2.3" height="2.3" rx=".6"/><rect x="2.2" y="14.2" width="7.6" height="7.6" rx="2.1" fill="none" stroke="currentColor" stroke-width="1.9"/><rect x="4.85" y="16.85" width="2.3" height="2.3" rx=".6"/><rect x="14.2" y="14.2" width="3.1" height="3.1" rx=".8"/><rect x="18.7" y="14.2" width="3.1" height="3.1" rx=".8"/><rect x="14.2" y="18.7" width="3.1" height="3.1" rx=".8"/><rect x="18.7" y="18.7" width="3.1" height="3.1" rx=".8" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
   <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="1.5" width="12" height="21" rx="2.600" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 19.2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10.5" r="2.8" fill="var(--slit,#0a0505)" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2.5" y="3.5" width="19" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 21h6M12 16v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="10.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M1.800 19.5h20.400l-1.700-3.400a1 1 0 0 0-.9-.6H4.400a1 1 0 0 0-.9.6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13.5" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17.5V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M6.500 6h11a4.500 4.500 0 0 1 4.400 5.500l-.9 4a3 3 0 0 1-5.200 1.300L14.500 15h-5l-1.300 1.800a3 3 0 0 1-5.200-1.300l-.9-4A4.500 4.500 0 0 1 6.500 6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 9.5v3M5.5 11h3" stroke="currentColor" stroke-width="1.700" stroke-linecap="round"/><circle cx="16" cy="9.8" r=".95" fill="currentColor"/><circle cx="18" cy="11.8" r=".95" fill="currentColor"/></symbol>
+  <symbol id="i-headphone" viewBox="0 0 24 24"><path d="M4 13.5v-1a8 8 0 0 1 16 0v1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="2.5" y="13" width="4" height="6.500" rx="1.700"/><rect x="17.5" y="13" width="4" height="6.500" rx="1.700"/></symbol>
   <symbol id="i-bank" viewBox="0 0 24 24"><path d="M12 2 2 7.5v1.7h20V7.5z"/><path d="M4 10.5v8M9 10.5v8M15 10.5v8M20 10.5v8" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"/><rect x="2" y="19.5" width="20" height="2.200" rx="1"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.200" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 6.8V12l3.6 2.2" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1.500 12S5 5 12 5s10.500 7 10.500 7-3.5 7-10.500 7S1.500 12 1.500 12z" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.200" fill="none" stroke="currentColor" stroke-width="2.200"/></symbol>
@@ -1799,10 +1810,7 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
       <input id="q" type="text" style="padding-left:1.6rem" placeholder="ຄົ້ນຫາຊື່ສິນຄ້າ, ໂປຣແກຣມ, ຫຼື ໝວດໝູ່..." autocomplete="off" enterkeyhint="search" aria-label="ຄົ້ນຫາສິນຄ້າ">
       <button type="button" class="search-clear" aria-label="ລ້າງຄຳຄົ້ນຫາ" tabindex="-1"><i></i><i></i></button>
     </div>
-    <div class="filters">
-      <button class="chip" data-cat="IOS"><span class="tile ios"><svg><use href="#i-apple"/></svg></span>ໝວດໝູ່ IOS</button>
-      <button class="chip" data-cat="ANDROID"><span class="tile and"><svg><use href="#i-android"/></svg></span>ໝວດໝູ່ ANDROID</button>
-    </div>
+    <div class="filters" id="homeCats"></div>
   </section>
 </div>
 
@@ -2102,7 +2110,7 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
   <section class="ad-pane on" id="ap-cats" role="tabpanel">
     <div class="ad-help"><span class="ad-i">i</span><div><b>ແຖບນີ້ໃຊ້ເຮັດຫຍັງ</b><p>ໝວດໝູ່ໃຊ້ຈັດກຸ່ມສິນຄ້າ ໃຫ້ລູກຄ້າກອງເບິ່ງງ່າຍ. ຕ້ອງມີໝວດໝູ່ກ່ອນ ຈຶ່ງຈະເພີ່ມສິນຄ້າເຂົ້າໝວດນັ້ນໄດ້. ແກ້ຊື່ໄດ້ (ສິນຄ້າຈະຍ້າຍຕາມ) ແຕ່ລຶບໄດ້ສະເພາະໝວດທີ່ບໍ່ມີສິນຄ້າ.</p></div></div>
     <div class="card"><p class="sec-t">ໝວດໝູ່ທັງໝົດ</p><div id="aCats"></div></div>
-    <div class="card"><p class="sec-t">ເພີ່ມໝວດໝູ່ໃໝ່</p><div class="line"><input class="field" id="aCatIn" placeholder="ຊື່ໝວດໝູ່ໃໝ່"><button class="btn b2" id="aCatAdd">ເພີ່ມ</button></div><p class="hint">ຕັ້ງຊື່ສັ້ນໆ ທີ່ລູກຄ້າເຂົ້າໃຈງ່າຍ ເຊັ່ນ "ເກມ" ຫຼື "ໂປຣແກຣມ".</p></div>
+    <div class="card"><p class="sec-t">ເພີ່ມໝວດໝູ່ໃໝ່</p><p class="hint" style="margin:0 0 .3rem">ເລືອກໄອຄອນ</p><div class="icoPick" id="aCatIcoPick"></div><div class="line"><input class="field" id="aCatIn" placeholder="ຊື່ໝວດໝູ່ໃໝ່"><button class="btn b2" id="aCatAdd">ເພີ່ມ</button></div><p class="hint">ຕັ້ງຊື່ສັ້ນໆ ທີ່ລູກຄ້າເຂົ້າໃຈງ່າຍ ເຊັ່ນ "ເກມ" ຫຼື "ໂປຣແກຣມ". ກົດໄອຄອນຢູ່ໜ້າຊື່ໝວດໝູ່ໃນລາຍການດ້ານເທິງ ເພື່ອປ່ຽນໄອຄອນພາຍຫຼັງໄດ້.</p></div>
   </section>
 
   <!-- ===== ແຖບ: ບັນຊີລູກຄ້າ ===== -->
@@ -2288,6 +2296,12 @@ const DEMO={user:'ຕົວແທນ #0019',credit:0}; /* ເຄຣດິດບ�
 const UNL=9999; /* สินค้าที่สร้างใหม่ = ไม่จำกัดจำนวน */
 const P=[]; /* ไม่มีสินค้าตัวอย่างแล้ว — เพิ่มสินค้าจริงผ่านแท็บแอดมิน */
 const IC={'ໂປຣແກຣມ':'i-grid','ຫ້ອງການ':'i-boxes','ຄວາມປອດໄພ':'i-check','ເກມ':'i-bolt','IOS':'i-apple','ANDROID':'i-android'};
+/* ໄອຄອນໝວດໝູ່: ແອດມິນເລືອກເອງຕອນເພີ່ມ/ແກ້ໝວດໝູ່ ແລ້ວເກັບໄວ້ໃນ DB.catIcons[ຊື່ໝວດ]=ໄອຄອນ */
+const CAT_ICONS=['i-phone','i-desktop','i-laptop','i-tablet','i-apple','i-android','i-tv','i-gamepad','i-headphone','i-grid','i-boxes','i-bolt','i-check','i-cart'];
+const catIcon=c=>(DB.catIcons&&DB.catIcons[c])||IC[c]||'i-grid';
+let newCatIcon='i-phone', catIcoOpen=null;
+function renderNewCatPicker(){const b=$('#aCatIcoPick');if(!b)return;b.innerHTML=CAT_ICONS.map(i=>`<button type="button" class="${i===newCatIcon?'on':''}" data-newcaticon="${i}" aria-label="${i}"><svg><use href="#${i}"/></svg></button>`).join('')}
+function renderHomeCats(){const b=$('#homeCats');if(!b)return;b.innerHTML=DB.cats.map(c=>`<button class="chip" data-cat="${esc(c)}"><span class="tile gen"><svg><use href="#${catIcon(c)}"/></svg></span>${esc(c)}</button>`).join('')}
 /* ຮູບແບບເລກເງິນກີບລາວ: ໃຊ້ "." ຄັ່ນຫລັກພັນ ແທນ "," (ແບບທີ່ຄົນລາວຂຽນ ເຊັ່ນ 100.000 = ໜຶ່ງແສນກີບ) */
 const fmt=n=>Math.round(Number(n)||0).toLocaleString('en-US').replace(/,/g,'.');
 /* แก้บั๊ก: <input type="number"> อ่านจุด(.) เป็นทศนิยม ทำให้พิมพ์ "700.000" (700,000 ກີບ) กลายเป็น 700
@@ -2334,7 +2348,7 @@ function save(){try{sanitizeMoney();localStorage.setItem(SK,JSON.stringify(DB,fu
   if(DB.products.length!==n0) save();})();
 /* One-time: convert previously saved baht amounts to kip (approx. 1 THB = 650 LAK, rounded to nearest 1,000) */
 if(DB.cur!=='LAK'){const kp=v=>Math.round((+v||0)*650/1000)*1000;DB.credit=kp(DB.credit);DB.products.forEach(p=>{p.price=kp(p.price)});DB.cur='LAK';save()}
-const sym=p=>IC[p.cat]||'i-grid';
+const sym=p=>catIcon(p.cat);
 const pDurs=p=>(p.durs||[]).filter(d=>d&&String(d.label||'').trim()).map(d=>({label:String(d.label).trim(),price:Math.max(0,+d.price||0),stock:Math.max(0,+d.stock||0)}));
 const pMin=p=>{const a=pDurs(p);return a.length?Math.min(...a.map(d=>d.price)):p.price};
 const pMulti=p=>pDurs(p).length>1;
@@ -2364,7 +2378,7 @@ const openSheet=h=>{box.innerHTML=h;sheet.classList.add('on')}, closeSheet=()=>s
 
 /* ----- สินค้า (ฝั่งลูกค้า) ----- */
 let cat='ທັງໝົດ',only=false,pq='';
-function renderCats(){$('#cats').innerHTML='<i class="cat-ind" id="catInd"></i>'+['ທັງໝົດ',...DB.cats].map((c,i)=>`<button class="cat${c===cat?' on':''}" data-cat="${esc(c)}" style="--k:${i}">${esc(c)}</button>`).join('')+`<button class="cat" id="onlyStock" aria-pressed="${only}" style="--k:${DB.cats.length+1}">ສະເພາະທີ່ມີສະຕັອກ</button>`;posCatInd()}
+function renderCats(){renderHomeCats();$('#cats').innerHTML='<i class="cat-ind" id="catInd"></i>'+['ທັງໝົດ',...DB.cats].map((c,i)=>`<button class="cat${c===cat?' on':''}" data-cat="${esc(c)}" style="--k:${i}">${esc(c)}</button>`).join('')+`<button class="cat" id="onlyStock" aria-pressed="${only}" style="--k:${DB.cats.length+1}">ສະເພາະທີ່ມີສະຕັອກ</button>`;posCatInd()}
 /* แผ่นไฟใต้หมวดหมู่ที่เลือกอยู่ (เหมือน posInd() ของแท็บแอดมิน) */
 function posCatInd(){const b=$('#cats .cat.on'),i=$('#catInd'),bar=$('#cats');if(!b||!i||!b.offsetWidth)return;
   i.style.width=b.offsetWidth+'px';i.style.transform='translateX('+b.offsetLeft+'px)';
@@ -2570,7 +2584,7 @@ function crSync(){
 }
 
 /* ---- orders ---- */
-const ordIcon=o=>o.cat&&IC[o.cat]?IC[o.cat]:'i-cart';
+const ordIcon=o=>o.cat?catIcon(o.cat):'i-cart';
 function ordBadge(o){if(o.status==='auto')return bdg('ok','ສຳເລັດ · ອັດຕະໂນມັດ');if(o.status==='wait')return bdg('low','ລໍຖ້າສົ່ງ');return bdg('ok','ສົ່ງແລ້ວ')}
 function renderOrders(){
   const os=DB.orders||[],tot=os.length,rev=os.reduce((a,o)=>a+o.price,0),wait=os.filter(o=>o.status==='wait').length,avg=tot?Math.round(rev/tot):0;
@@ -2627,7 +2641,7 @@ function renderMyKeys(){
   const os=(DB.orders||[]).filter(o=>o.key);
   const q=keyQ.toLowerCase(),fl=os.filter(o=>(o.name+o.code).toLowerCase().includes(q));
   $('#keyCount').textContent=`ສະແດງ ${fl.length} ຈາກ ${os.length} ລະຫັດ`;
-  $('#keyList').innerHTML=fl.map((o,i)=>`<div class="kcard" style="--n:${Math.min(i,9)}"><div class="th"><svg><use href="#${o.cat&&IC[o.cat]?IC[o.cat]:'i-key'}"/></svg></div><div class="pi"><b>${esc(o.name)}</b><span style="color:var(--muted);font-size:1.2rem">${o.code?esc(o.code)+' · ':''}${fdate(o.t)}</span>
+  $('#keyList').innerHTML=fl.map((o,i)=>`<div class="kcard" style="--n:${Math.min(i,9)}"><div class="th"><svg><use href="#${o.cat?catIcon(o.cat):'i-key'}"/></svg></div><div class="pi"><b>${esc(o.name)}</b><span style="color:var(--muted);font-size:1.2rem">${o.code?esc(o.code)+' · ':''}${fdate(o.t)}</span>
     <div class="kcode"><span class="masked" data-kv="${esc(o.key)}">${esc(o.key)}</span><button class="ib" data-krev="${o.id}" aria-label="ສະແດງ/ເຊື່ອງລະຫັດ"><svg><use href="#i-eye"/></svg></button></div></div>
     <div class="pa"><button class="ib" data-kcopy2="${o.id}" aria-label="ສຳເນົາ"><svg><use href="#i-copy"/></svg></button></div></div>`).join('')
     ||'<p class="empty">ຍັງບໍ່ມີລະຫັດ — ຊື້ສິນຄ້າແບບອັດຕະໂນມັດເພື່ອຮັບລະຫັດທັນທີ</p>';
@@ -2716,7 +2730,7 @@ function renderAdmin(){
   $('#aList').innerHTML=fl.map(p=>{const nd=pDurs(p).length;return `<div class="prow"><div class="th">${p.imgs[0]?`<img src="${p.imgs[0]}" alt="">`:`<svg><use href="#${sym(p)}"/></svg>`}</div><div class="pi"><b>${esc(p.name)}</b><div class="m">${pMulti(p)?'ເລີ່ມ ':''}${K(pMin(p))} · ${esc(p.cat)}${nd?' · '+nd+' ຕົວເລືອກ':''}</div></div><div class="pa"><button class="ib" data-edit="${p.id}">ແກ້ໄຂ</button></div></div>`}).join('')||'<p class="note">ຍັງບໍ່ມີສິນຄ້າ ກົດ "+ ເພີ່ມສິນຄ້າໃໝ່" ເພື່ອເລີ່ມ</p>';
 
   /* categories */
-  $('#aCats').innerHTML=DB.cats.map((c,i)=>{const n=L.filter(p=>p.cat===c).length,s=L.filter(p=>p.cat===c).reduce((a,p)=>a+p.stock,0);return `<div class="prow"><span class="ico s${i%4+1}"><svg><use href="#${IC[c]||'i-grid'}"/></svg></span><div class="pi"><b>${esc(c)}</b><div class="m">${n} ລາຍການ</div></div><div class="pa row"><button class="ib" data-rncat="${esc(c)}" aria-label="ແກ້ຊື່"><svg><use href="#i-edit"/></svg></button><button class="ib dng" data-delcat="${esc(c)}" aria-label="ລຶບໝວດໝູ່"><svg><use href="#i-trash"/></svg></button></div></div>`}).join('')||'<p class="note">ຍັງບໍ່ມີໝວດໝູ່</p>';
+  $('#aCats').innerHTML=DB.cats.map((c,i)=>{const n=L.filter(p=>p.cat===c).length;const pick=catIcoOpen===c?`<div class="icoPick cat-ico-set">${CAT_ICONS.map(ic=>`<button type="button" class="${ic===catIcon(c)?'on':''}" data-caticon-cat="${esc(c)}" data-caticon-val="${ic}" aria-label="${ic}"><svg><use href="#${ic}"/></svg></button>`).join('')}</div>`:'';return `<div class="prow" style="flex-wrap:wrap"><button type="button" class="ico s${i%4+1}" data-caticon="${esc(c)}" aria-label="ປ່ຽນໄອຄອນ"><svg><use href="#${catIcon(c)}"/></svg></button><div class="pi"><b>${esc(c)}</b><div class="m">${n} ລາຍການ</div></div><div class="pa row"><button class="ib" data-rncat="${esc(c)}" aria-label="ແກ້ຊື່"><svg><use href="#i-edit"/></svg></button><button class="ib dng" data-delcat="${esc(c)}" aria-label="ລຶບໝວດໝູ່"><svg><use href="#i-trash"/></svg></button></div>${pick}</div>`}).join('')||'<p class="note">ຍັງບໍ່ມີໝວດໝູ່</p>';
 
   /* restock select / low / log */
   $('#rsProd').innerHTML='<option value="">— ເລືອກສິນຄ້າ —</option>'+L.map(p=>`<option value="${p.id}">${esc(p.name)} (${esc(p.code)}) · ເຫຼືອ ${p.stock}</option>`).join('');
@@ -2765,6 +2779,7 @@ sheet.addEventListener('click',e=>{const t=e.target,p=DB.products.find(x=>x.id==
       const r=await adm('cat_rename',{old:rnOld,new:v}).catch(()=>null);
       if(!r||!r.ok) return say('ແກ້ຊື່ໝວດໝູ່ບໍ່ສຳເລັດ');
       DB.cats=DB.cats.map(c=>c===rnOld?v:c);if(cat===rnOld)cat=v;
+      if(DB.catIcons&&rnOld in DB.catIcons&&rnOld!==v){DB.catIcons[v]=DB.catIcons[rnOld];delete DB.catIcons[rnOld]}
       await productsLoad();renderCats();renderP();renderAdmin();closeSheet();say('ແກ້ຊື່ໝວດໝູ່ແລ້ວ')
     })()}
 });
@@ -2860,10 +2875,14 @@ $('#v-admin').addEventListener('click',e=>{
   const ok=e.target.closest('[data-ordkey]'); if(ok){const o=(DB.orders||[]).find(x=>x.id==ok.dataset.ordkey);if(o&&o.key)copyQ(o.key,'ສຳເນົາລະຫັດແລ້ວ')}
   const krv=e.target.closest('[data-krev]'); if(krv){const b=krv,sp=b.previousElementSibling;sp.classList.toggle('masked');b.classList.toggle('on',!sp.classList.contains('masked'));b.querySelector('use').setAttribute('href',sp.classList.contains('masked')?'#i-eye':'#i-eye-off')}
   const kc2=e.target.closest('[data-kcopy2]'); if(kc2){const o=(DB.orders||[]).find(x=>x.id==kc2.dataset.kcopy2);if(o&&o.key)copyQ(o.key,'ສຳເນົາລະຫັດແລ້ວ')}
+  const nic=e.target.closest('[data-newcaticon]'); if(nic){newCatIcon=nic.dataset.newcaticon;renderNewCatPicker();return}
+  const cib=e.target.closest('[data-caticon]'); if(cib){catIcoOpen=catIcoOpen===cib.dataset.caticon?null:cib.dataset.caticon;renderAdmin();return}
+  const cset=e.target.closest('[data-caticon-cat]'); if(cset){DB.catIcons=DB.catIcons||{};DB.catIcons[cset.dataset.caticonCat]=cset.dataset.caticonVal;catIcoOpen=null;save();renderCats();renderP();renderAdmin();return say('ປ່ຽນໄອຄອນແລ້ວ')}
 });
 $('#stLowSave').onclick=()=>{const v=Math.floor(+$('#stLow').value);if(!(v>=1&&v<=999))return say('ໃສ່ຕົວເລກ 1 ຫາ 999');DB.low=v;LOW=v;save();renderAdmin();say('ບັນທຶກເກນແຈ້ງເຕືອນແລ້ວ: ≤ '+v)};
 $('#aNameSave').onclick=()=>{const v=$('#aName').value.trim();if(!v)return say('ກະລຸນາໃສ່ຊື່ຮ້ານ');DB.name=v;save();paint();say('ປ່ຽນຊື່ຮ້ານແລ້ວ')};
-$('#aCatAdd').onclick=()=>{const v=$('#aCatIn').value.trim();if(!v)return say('ກະລຸນາໃສ່ຊື່ໝວດໝູ່ກ່ອນ');if(DB.cats.includes(v))return say('ມີໝວດໝູ່ນີ້ແລ້ວ');DB.cats.push(v);$('#aCatIn').value='';save();renderCats();renderAdmin();say('ເພີ່ມໝວດໝູ່ '+v)};
+$('#aCatAdd').onclick=()=>{const v=$('#aCatIn').value.trim();if(!v)return say('ກະລຸນາໃສ່ຊື່ໝວດໝູ່ກ່ອນ');if(DB.cats.includes(v))return say('ມີໝວດໝູ່ນີ້ແລ້ວ');DB.cats.push(v);DB.catIcons=DB.catIcons||{};DB.catIcons[v]=newCatIcon;$('#aCatIn').value='';newCatIcon='i-phone';renderNewCatPicker();save();renderCats();renderAdmin();say('ເພີ່ມໝວດໝູ່ '+v)};
+renderNewCatPicker();
 $('#aCatIn')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#aCatAdd').click()}});
 $('#aNew').onclick=()=>openEd(null);
 $('#bkCopy').onclick=()=>{const t=JSON.stringify(DB);if(legacyCopy(t))return say('ສຳເນົາຂໍ້ມູນສຳຮອງແລ້ວ ('+Math.max(1,Math.round(t.length/1024))+' KB)');if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>say('ສຳເນົາຂໍ້ມູນສຳຮອງແລ້ວ ('+Math.max(1,Math.round(t.length/1024))+' KB)')).catch(()=>{$('#bkBox').value=t;$('#bkBox').select();say('ກົດສຳເນົາຈາກຊ່ອງດ້ານລຸ່ມ')})}else{$('#bkBox').value=t;$('#bkBox').select();say('ກົດສຳເນົາຈາກຊ່ອງດ້ານລຸ່ມ')}};
@@ -3326,7 +3345,7 @@ $('#hist').innerHTML='<p class="note">ກຳລັງໂຫຼດ…</p>'; /* �
 
 /* ===== หน้าแรก: ช่องค้นหา + ปุ่มหมวดหมู่ IOS / ANDROID -> เปิดหน้าสินค้าตามหมวด ===== */
 function openCat(c){cat=c;pq='';$('#pq').value='';renderCats();renderP();show('products')}
-$$('.filters .chip').forEach(c=>c.addEventListener('click',()=>openCat(c.dataset.cat)));
+$('#homeCats')?.addEventListener('click',e=>{const b=e.target.closest('.chip');if(b)openCat(b.dataset.cat)});
 $('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){cat='ທັງໝົດ';pq=e.target.value.trim().toLowerCase();$('#pq').value=e.target.value;renderCats();renderP();show('products')}});
 
 /* ===== Ripple: อนิเมชันสัมผัสทั่วทั้งแอปเมื่อกดปุ่ม ===== */
