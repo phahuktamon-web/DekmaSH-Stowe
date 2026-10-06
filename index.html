@@ -6,48 +6,6 @@
 <meta name="color-scheme" content="dark">
 <meta http-equiv="Cache-Control" content="no-store">
 <title>DekmaSH Stowe - ລະບົບຕົວແທນຈຳໜ່າຍ</title>
-<noscript>
-  <meta http-equiv="refresh" content="0; url=login.html">
-  <style>body{visibility:visible!important}</style>
-</noscript>
-<script>
-/* =====================================================================
-   ===== Login gate (เข้ม) =====
-   เดิม: เช็คแค่ "มี token ไหม" ฝั่งเบราว์เซอร์ล้วนๆ — ใครเปิด console แล้วยัด
-   localStorage.dekma_token = 'อะไรก็ได้' ก็เห็นหน้าแอปได้ทันที (แค่ยังไม่ถูกเตะออก
-   จนกว่า authCheck() ท้ายหน้าจะทำงานอีกที ~ไม่กี่วิ ซึ่งพอแล้วให้เห็นข้อมูลหลุดไปแวบนึง)
-   ใหม่: ซ่อนทั้งหน้าไว้ก่อน (visibility:hidden) แล้วถาม "เซิร์ฟเวอร์จริง" ผ่าน dk_check
-   ทันทีที่หน้าโหลด — เห็นแอปได้ก็ต่อเมื่อเซิร์ฟเวอร์ยืนยัน token ว่าใช้ได้จริงเท่านั้น
-   ไม่ว่าจะเข้าทางลิงก์ตรง, bookmark, พิมพ์ URL เอง, หรือเปิดไฟล์ index.html ตรงๆ
-   ก็โดนเช็คเหมือนกันหมด เพราะสคริปต์นี้รันก่อนเนื้อหาทุกบรรทัดของหน้า
-   ===================================================================== */
-(function(){
-  document.documentElement.style.visibility='hidden'; /* ซ่อนก่อน กันแวบเห็นข้อมูล */
-  var tk=null; try{tk=localStorage.getItem('dekma_token')}catch(e){}
-  function kick(code){
-    try{localStorage.removeItem('dekma_token');localStorage.removeItem('dekma_user')}catch(e){}
-    location.replace('login.html'+(code?('?r='+encodeURIComponent(code)):''));
-  }
-  if(!tk) return kick('none');
-  var SB_URL='https://zjmwukvfqmgxnidwibmr.supabase.co';
-  var SB_KEY='sb_publishable_K7I7yfCogfeWl0FpFZ2rHQ_G2t3CPld';
-  var done=false;
-  function reveal(){ if(done)return; done=true; clearTimeout(safety); document.documentElement.style.visibility=''; }
-  /* กันจอค้างมืดถ้าเน็ต/เซิร์ฟเวอร์ไม่ตอบเลย — ไม่งั้นเน็ตหลุดตอนโหลด = เปิดแอปไม่ได้ตลอดกาล */
-  var safety=setTimeout(reveal,4000);
-  fetch(SB_URL+'/rest/v1/rpc/dk_check',{method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_token:tk})})
-    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
-    .then(function(r){
-      if(done) return;
-      if(r&&r.ok){ reveal(); } else { done=true; clearTimeout(safety); kick(r&&r.code); }
-    })
-    .catch(function(){
-      /* เรียกเซิร์ฟเวอร์ไม่สำเร็จตอนโหลดหน้า (เน็ตกระตุก ฯลฯ): ปล่อยผ่านชั่วคราว
-         authCheck() ท้ายหน้าจะยิงถามซ้ำภายในไม่กี่วิ ถ้า token ปลอมจริงจะโดนเตะออกตอนนั้น */
-      reveal();
-    });
-})();
-</script>
 <script>
 /* Some in-app WebViews mis-measure vw / don't support clamp() reliably, which can make
    the whole layout render oversized and spill off the edge of the screen. This forces the
@@ -81,7 +39,7 @@
   --text:#f2e9ea; --muted:#8a7678;
   --pill-bg:#1c0508; --pill-border:rgba(205,0,35,.5); --pill-text:#ff4d6a;
   --live-bg:#1d2a37; --live-border:#3b4b57; --green:#4ade80;
-  --red:#CD0023; --red-bright:#ff1f42; --red-dim:#7a0016; /* ชื่อเดียวกับ login.html */
+  --red:#CD0023; --red-bright:#ff1f42; --red-dim:#7a0016; 
   --b2-a:var(--red); --b2-b:var(--red-dim); --b2-bd:#e01a3a; --b2-text:#ffb8c2;
   --b3-bg:#14252f; --b3-bd:#1f5c52; --b4-bg:#2b1a1f; --b4-bd:#8c5a2b;
   --sel-outer:#1a1112; --sel-outer-bd:#3a2a2c; --sel-inner:#0a0505; --sel-inner-bd:#2a1a1c;
@@ -1874,50 +1832,10 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
   <div class="stack">
     <div class="card" style="display:flex;align-items:center;gap:1.6rem"><span class="av">ຕທ</span><div><p style="font-size:1.8rem;font-weight:700" id="uname"></p><p class="lb" style="letter-spacing:0">ຕົວແທນຈຳໜ່າຍ</p></div><button class="btn b3" data-go="topup" style="margin-left:auto;height:3.4rem"><svg><use href="#i-wallet"/></svg><span id="ucredit"></span></button></div>
     <div class="card" style="padding:.6rem 1.6rem">
-      <button class="row" data-go="account"><span class="ico s1"><svg><use href="#i-users"/></svg></span>ບັນຊີຂອງຂ້ອຍ<svg><use href="#i-chev"/></svg></button>
       <button class="row" data-go="keys"><span class="ico s3"><svg><use href="#i-key"/></svg></span>ລະຫັດໄລເຊັນຂອງຂ້ອຍ<svg><use href="#i-chev"/></svg></button>
       <button class="row" data-go="myorders"><span class="ico s2"><svg><use href="#i-boxes"/></svg></span>ປະຫວັດຄຳສັ່ງຊື້<svg><use href="#i-chev"/></svg></button>
       <button class="row" data-go="topup"><span class="ico s3"><svg><use href="#i-wallet"/></svg></span>ເຕີມເງິນເຄຣດິດ<svg><use href="#i-chev"/></svg></button>
     </div>
-    <div class="card" style="padding:.6rem 1.6rem"><button class="row out" id="btnLogout"><span class="ico" style="--c:#f87171;--ibg:#2f1420;--bd:#7a2b3d"><svg><use href="#i-out"/></svg></span>ອອກຈາກລະບົບ</button></div>
-  </div>
-</div>
-
-<!-- ===== ບັນຊີຂອງຂ້ອຍ ===== -->
-<div class="view" id="v-account">
-  <div class="pg"><button class="back" data-go="menu" aria-label="ກັບຄືນ"><svg><use href="#i-back"/></svg></button><div><h2>ບັນຊີຂອງຂ້ອຍ</h2><small>ຂໍ້ມູນບັນຊີ ແລະສະຖານະການໃຊ້ງານ</small></div></div>
-
-  <div class="card acc-hero">
-    <div class="acc-av-wrap"><span class="acc-av" id="accAv">ຕທ</span><i class="acc-ring" aria-hidden="true"></i></div>
-    <p class="acc-name" id="accName">—</p>
-    <span class="badge acc-role"><svg><use href="#i-admin"/></svg>ຕົວແທນຈຳໜ່າຍ</span>
-  </div>
-
-  <div class="card acc-exp" id="accExpCard">
-    <div class="acc-exp-top">
-      <span class="ico s2"><svg><use href="#i-clock"/></svg></span>
-      <div><p class="sec-t" style="margin:0">ສະຖານະການໃຊ້ງານ</p><p class="hint" id="accExpSub" style="margin:.2rem 0 0">ກຳລັງກວດສອບ…</p></div>
-      <span class="bdg" id="accExpBadge" style="margin-left:auto"></span>
-    </div>
-    <div class="acc-exp-bar"><i id="accExpFill"></i></div>
-  </div>
-
-  <div class="metrics">
-    <div class="mt"><span class="ico s3"><svg><use href="#i-wallet"/></svg></span><small>ເຄຣດິດຄົງເຫຼືອ</small><b id="accCredit" data-pre="₭">₭0</b></div>
-    <div class="mt"><span class="ico s2"><svg><use href="#i-cart"/></svg></span><small>ຄຳສັ່ງຊື້ທັງໝົດ</small><b id="accOrders">0</b></div>
-    <div class="mt"><span class="ico s4"><svg><use href="#i-key"/></svg></span><small>ລະຫັດທີ່ໄດ້ຮັບ</small><b id="accKeys">0</b></div>
-    <div class="mt"><span class="ico s1"><svg><use href="#i-chart"/></svg></span><small>ຍອດຊື້ລວມ</small><b id="accSpent" data-pre="₭">₭0</b></div>
-  </div>
-
-  <div class="card" style="padding:.6rem 1.6rem">
-    <div class="row" style="cursor:default"><span class="ico s1"><svg><use href="#i-phone"/></svg></span><div class="pi" style="min-width:0"><b style="font-size:1.5rem">ອຸປະກອນນີ້</b><div class="m" id="accDevice" style="margin-top:.2rem"></div></div></div>
-    <div class="row" style="cursor:default"><span class="ico s2"><svg><use href="#i-clock"/></svg></span><div class="pi" style="min-width:0"><b style="font-size:1.5rem">ເຂົ້າສູ່ລະບົບລ່າສຸດ</b><div class="m" id="accLast" style="margin-top:.2rem"></div></div></div>
-  </div>
-
-  <div class="card" style="padding:.6rem 1.6rem">
-    <button class="row" data-go="topup"><span class="ico s3"><svg><use href="#i-wallet"/></svg></span>ເຕີມເງິນເຄຣດິດ<svg><use href="#i-chev"/></svg></button>
-    <button class="row" data-go="keys"><span class="ico s4"><svg><use href="#i-key"/></svg></span>ລະຫັດໄລເຊັນຂອງຂ້ອຍ<svg><use href="#i-chev"/></svg></button>
-    <button class="row" data-go="myorders"><span class="ico s2"><svg><use href="#i-boxes"/></svg></span>ປະຫວັດຄຳສັ່ງຊື້<svg><use href="#i-chev"/></svg></button>
   </div>
 </div>
 
@@ -2287,7 +2205,6 @@ document.addEventListener('click',e=>{
   const g=e.target.closest('[data-go]'); if(g) return show(g.dataset.go);
   const s=e.target.closest('[data-say]'); if(s) say(s.dataset.say+' — ຍັງບໍ່ໄດ້ເຊື່ອມຕໍ່ລະບົບ');
 });
-$('#btnLogout')?.addEventListener('click',()=>authLogout());
 $$('.nav .item').forEach(b=>b.addEventListener('click',()=>{
   $$('.nav .item').forEach(x=>x.classList.remove('bump'));
   requestAnimationFrame(()=>b.classList.add('bump'));
@@ -2361,7 +2278,7 @@ function paint(){
   try{setNum('#credit',DB.credit);$('#ucredit').textContent='₭'+fmt(DB.credit)}catch(e){console.error('อัปเดตเครดิตหลักผิดพลาด:',e)}
   try{$('#storeName').textContent=DB.name;document.title=DB.name+' - ລະບົບຕົວແທນຈຳໜ່າຍ';$('#aName').value=DB.name}catch(e){}
   /* ซิงก์ยอดเครดิต/ออเดอร์/คีย์ในทุกหน้าให้เท่ากันทันที ไม่ต้องรอ setInterval 15 วิ (แก้ปัญหายอดเงินไม่หักในหน้าบัญชี/topup หลังซื้อ-เติมเงิน) */
-  try{renderMyAccount()}catch(e){} try{renderMyKeys()}catch(e){} try{renderMyOrders()}catch(e){}
+  try{}catch(e){} try{renderMyKeys()}catch(e){} try{renderMyOrders()}catch(e){}
 }
 function legacyCopy(t){
   const a=document.createElement('textarea');
@@ -2449,7 +2366,7 @@ async function placeOrder(id,amount,durLabel,qty){
   catch(e){return {ok:false,code:'net',msg:'ເຊື່ອມຕໍ່ບໍ່ໄດ້ ກະລຸນາກວດອິນເຕີເນັດ ແລ້ວລອງໃໝ່'}}
   if(!r||!r.ok){
     if(r&&r.code==='insufficient_credit'){DB.credit=realInt(r.balance);try{paint()}catch(e){}return {ok:false,code:'credit',msg:'ເຄຣດິດບໍ່ພໍ ກະລຸນາເຕີມເງິນກ່ອນ'}}
-    if(r&&r.code==='no_session'){authCheck();return {ok:false,code:'session',msg:'Session ໝົດອາຍຸ ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່'}}
+    if(r&&r.code==='no_session'){return {ok:false,code:'session',msg:'Session ໝົດອາຍຸ ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່'}}
     if(r&&r.code==='stock'){productsLoad();return {ok:false,code:'stock',msg:'ສິນຄ້ານີ້ມີສະຕັອກບໍ່ພຽງພໍ'}}
     return {ok:false,code:'err',msg:'ສັ່ງຊື້ບໍ່ສຳເລັດ ກະລຸນາລອງໃໝ່ອີກຄັ້ງ'}
   }
@@ -2603,40 +2520,6 @@ function renderOrders(){
     (o.status==='wait'?`<div class="pa"><button class="ib go" data-orddone="${o.id}">ສົ່ງແລ້ວ</button></div>`:o.key?`<div class="pa"><button class="ib" data-ordkey="${o.id}"><svg><use href="#i-copy"/></svg></button></div>`:'')+`</div>`).join('')||'<p class="note">ຍັງບໍ່ມີອໍເດີ</p>';
 }
 
-/* ---- ບັນຊີຂອງຂ້ອຍ ---- */
-function fmtLeft(ms){
-  if(ms<=0) return {t:'ໝົດອາຍຸແລ້ວ',cls:'crit'};
-  const d=Math.floor(ms/86400000),h=Math.floor(ms%86400000/3600000),m=Math.floor(ms%3600000/60000);
-  const t=d>0?`ເຫຼືອ ${d} ມື້ ${h} ຊມ`:h>0?`ເຫຼືອ ${h} ຊົ່ວໂມງ ${m} ນາທີ`:`ເຫຼືອ ${m} ນາທີ`;
-  const cls=d<1?'crit':d<=3?'warn':'';
-  return {t,cls};
-}
-function renderMyAccount(){
-  if(!$('#accName')) return;
-  const un=(localStorage.getItem('dekma_user')||$('#uname')?.textContent||'—').trim();
-  $('#accName').textContent=un||'—';
-  $('#accAv').textContent=(un||'??').trim().slice(0,2).toUpperCase();
-  setNum('#accCredit',DB.credit);
-  setNum('#accOrders',(DB.orders||[]).length);
-  setNum('#accKeys',(DB.orders||[]).filter(o=>o.key).length);
-  setNum('#accSpent',(DB.orders||[]).reduce((a,o)=>a+o.price,0));
-  let dev='—'; try{dev=(localStorage.getItem('dekma_device')||'').slice(0,8).toUpperCase()||'—'}catch(e){}
-  $('#accDevice').textContent=dev==='—'?'—':'#'+dev;
-  let last=null; try{last=+localStorage.getItem('dekma_last_login')||0}catch(e){}
-  $('#accLast').textContent=last?fdate(last):'ບໍ່ມີຂໍ້ມູນ';
-  const bar=$('#accExpCard .acc-exp-bar'),fill=$('#accExpFill'),badge=$('#accExpBadge'),sub=$('#accExpSub');
-  if(typeof authExp==='number'&&authExp>0){
-    const left=authExp-(Date.now()+authOff), {t,cls}=fmtLeft(left);
-    sub.textContent='ບັນຊີ '+t;
-    badge.textContent=cls==='crit'?'ໃກ້ໝົດອາຍຸ':cls==='warn'?'ໃກ້ໝົດ':'ປົກກະຕິ';
-    badge.className='bdg '+(cls==='crit'?'out':cls==='warn'?'low':'ok');
-    bar.className='acc-exp-bar'+(cls?' '+cls:'');
-    const pct=Math.max(2,Math.min(100,Math.round(left/(30*86400000)*100)));
-    fill.style.width=pct+'%';
-  }else{
-    sub.textContent='ກຳລັງກວດສອບສະຖານະ…'; badge.textContent=''; fill.style.width='0%';
-  }
-}
 /* ---- ລະຫັດໄລເຊັນຂອງຂ້ອຍ ---- */
 let keyQ='';
 function renderMyKeys(){
@@ -2745,7 +2628,7 @@ function renderAdmin(){
   $$('#crF .cat').forEach(b=>b.classList.toggle('on',b.dataset.f===cf));
   $('#crLog').innerHTML=DB.tx.filter(x=>cf==='all'||(cf==='in'&&x.n>0)||(cf==='out'&&x.n<0)).map(x=>feedRow(x.n<0?'out':'in',txTitle(x),fdate(x.t)+(x.note?' · '+x.note:''),(x.n<0?'−':'+')+K(Math.abs(x.n)),'ຍອດ '+K(x.after))).join('')||'<p class="note">ຍັງບໍ່ມີທຸລະກຳ</p>';
 
-  rsSync();crSync();renderOrders();renderReports();renderAcc();renderMyAccount();renderMyKeys();renderMyOrders();
+  rsSync();crSync();renderOrders();renderReports();renderAcc();renderMyKeys();renderMyOrders();
 }
 
 function goRestock(id){rs.id=id;rs.mode=defMode(rsProd());rs.dur='';setTab('restock');rsSync();$('#rsProd').scrollIntoView({behavior:RM?'auto':'smooth',block:'center'})}
@@ -3157,26 +3040,6 @@ function applyAdminVisibility(user,role){
   if(!isAdmin && $('#v-admin')?.classList.contains('on')) show('home');
   if(isAdmin&&typeof tpBadgeRefresh==='function') tpBadgeRefresh();
 }
-/* ---- Session ຂອງລູກຄ້າ: token ຢູ່ localStorage (ບໍ່ຫຼຸດເອງ) · ຍິງ heartbeat ທຸກ 30 ວິ ---- */
-let authExp=0, authOff=0, authChk=0;
-function authKick(code){
-  try{localStorage.removeItem('dekma_token');localStorage.removeItem('dekma_user')}catch(e){}
-  applyAdminVisibility(null);
-  location.replace('login.html?r='+encodeURIComponent(code||'none'));
-}
-async function authCheck(){
-  let tk=null; try{tk=localStorage.getItem('dekma_token')}catch(e){}
-  if(!tk) return authKick('none');
-  try{
-    const r=await rpc('dk_check',{p_token:tk});
-    if(r&&r.ok){authExp=r.exp||0;authOff=r.now-Date.now();const un=$('#uname');if(un)un.textContent=r.user;try{localStorage.setItem('dekma_user',r.user)}catch(e){}applyAdminVisibility(r.user,r.role);renderMyAccount();loadHomeStats();walletLoad();productsLoad();return}
-    if(r&&r.code) authKick(r.code); /* ເຕະອອກສະເພາະເມື່ອເຊີບເວີບອກຊັດເຈນ */
-  }catch(e){
-    /* ເນັດຫຼຸດ/ເຊີບເວີຊ້າ = ຫ້າມເຕະອອກ · ຍົກເວັ້ນ offline ຫຼັງໝົດເວລາແລ້ວ >60 ວິ */
-    if(authExp&&Date.now()+authOff>authExp+60000) authKick('expired');
-  }
-}
-
 /* ---- ໜ້າຫຼັກ: 4 ກ່ອງສະຖິຕິ (ຕົວແທນ/ສິນຄ້າ/ລະຫັດ/ອໍເດີ) ດຶງຈາກເຊີບເວີຈິງ ---- */
 let statsBusy=false;
 async function loadHomeStats(){
@@ -3221,24 +3084,6 @@ async function productsLoad(){
   finally{ productsBusy=false }
 }
 setInterval(productsLoad,30000);
-function authLogout(){
-  let tk=null; try{tk=localStorage.getItem('dekma_token')}catch(e){}
-  try{localStorage.removeItem('dekma_token');localStorage.removeItem('dekma_user')}catch(e){}
-  const go=()=>{location.href='login.html'};
-  if(!tk) return go();
-  Promise.race([rpc('dk_logout',{p_token:tk}).catch(()=>{}),new Promise(r=>setTimeout(r,1500))]).then(go);
-}
-setInterval(authCheck,30000);
-setInterval(renderMyAccount,15000);
-setInterval(()=>{ /* ຮອດເວລາໝົດອາຍຸ (ຕາມເວລາເຊີບເວີ) → ຖາມເຊີບເວີທັນທີ (ອາດຖືກຕໍ່ອາຍຸໄປແລ້ວ) */
-  if(authExp&&Date.now()+authOff>=authExp&&Date.now()-authChk>5000){authChk=Date.now();authCheck()}
-},1000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)authCheck()});
-window.addEventListener('online',authCheck);
-window.addEventListener('focus',authCheck);
-window.addEventListener('pageshow',e=>{if(e.persisted)authCheck()});
-authCheck();
-
 /* ---- ແອດມິນ: ຈັດການບັນຊີ (ຕ້ອງໃສ່ລະຫັດແອດມິນ) ---- */
 const ACC_ERR={key:'ລະຫັດແອດມິນບໍ່ຖືກຕ້ອງ',user:'ຊື່ບັນຊີບໍ່ຖືກຕ້ອງ',pass:'ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 4 ຕົວ',days:'ຈຳນວນມື້ບໍ່ຖືກຕ້ອງ',dup:'ຊື່ບັນຊີນີ້ມີແລ້ວ',nf:'ບໍ່ພົບບັນຊີນີ້'};
 /* ADMK (ລະຫັດແອດມິນກາງ) ຖືກຖອດອອກແລ້ວ: ການຈັດການບັນຊີລູກຄ້າຕອນນີ້ໃຊ້ token ຂອງບັນຊີທີ່ login ຢູ່ແລ້ວ
