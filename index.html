@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <meta http-equiv="Cache-Control" content="no-store">
-<title>DekmaSH Stowe - ລະບົບຕົວແທນຈຳໜ່າຍ</title>
+<title>DekmaSH Stowe - ຮ້ານຄ້າອອນລາຍ</title>
 <script>
 /* Some in-app WebViews mis-measure vw / don't support clamp() reliably, which can make
    the whole layout render oversized and spill off the edge of the screen. This forces the
@@ -1742,8 +1742,8 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
 <main class="app">
 <div class="view on" id="v-home">
   <section class="hero">
-    <div class="badge"><svg><use href="#i-bolt"/></svg>ສູນໄລເຊັນຕົວແທນ<span class="live"><i></i>ອອນລາຍ 24/7</span></div>
-    <h1><span id="storeName">DekmaSH Stowe</span><br>ລະບົບຕົວແທນຈຳໜ່າຍ</h1>
+    <div class="badge"><svg><use href="#i-bolt"/></svg>ສູນໄລເຊັນ<span class="live"><i></i>ອອນລາຍ 24/7</span></div>
+    <h1><span id="storeName">DekmaSH Stowe</span><br>ຮ້ານຄ້າອອນລາຍ</h1>
     <div class="actions">
       <button class="btn b2" data-go="products" data-label="ສິນຄ້າທັງໝົດ"><svg><use href="#i-store"/></svg>ສິນຄ້າທັງໝົດ</button>
       <button class="btn b4" data-go="topup" data-label="ເຕີມເງິນເຄຣດິດ"><svg><use href="#i-wallet"/></svg>ເຕີມເງິນເຄຣດິດ</button>
@@ -1751,7 +1751,7 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
   </section>
 
   <section class="stats">
-    <div class="stat s1"><span class="ico"><svg><use href="#i-users"/></svg></span><div><p class="lb">ຕົວແທນຈຳໜ່າຍ</p><p class="val"><b id="stAgents">0</b><small>ບັນຊີ</small></p></div></div>
+    <div class="stat s1"><span class="ico"><svg><use href="#i-users"/></svg></span><div><p class="lb">ສະມາຊິກ</p><p class="val"><b id="stAgents">0</b><small>ບັນຊີ</small></p></div></div>
     <div class="stat s2"><span class="ico"><svg><use href="#i-boxes"/></svg></span><div><p class="lb">ສິນຄ້າໃນລະບົບ</p><p class="val"><b id="stProducts">0</b><small>ລາຍການ</small></p></div></div>
     <div class="stat s3"><span class="ico"><svg><use href="#i-key"/></svg></span><div><p class="lb">ລະຫັດທີ່ອອກແລ້ວ</p><p class="val"><b id="stCodes">0</b><small>ລະຫັດ</small></p></div></div>
     <div class="stat s4"><span class="ico"><svg><use href="#i-check"/></svg></span><div><p class="lb">ຄຳສັ່ງຊື້ສຳເລັດ</p><p class="val"><b id="stOrders">0</b><small>ອໍເດີ</small></p></div></div>
@@ -1821,7 +1821,7 @@ html.om-lock .item.on::before,html.om-lock .item.on svg,html.om-lock .nav-spot::
 <!-- ===== เมนู ===== -->
 <div class="view" id="v-menu">
   <div class="stack">
-    <div class="card" style="display:flex;align-items:center;gap:1.6rem"><span class="av">ຕທ</span><div><p style="font-size:1.8rem;font-weight:700" id="uname"></p><p class="lb" style="letter-spacing:0">ຕົວແທນຈຳໜ່າຍ</p></div><button class="btn b3" data-go="topup" style="margin-left:auto;height:3.4rem"><svg><use href="#i-wallet"/></svg><span id="ucredit"></span></button></div>
+    <div class="card" style="display:flex;align-items:center;gap:1.6rem"><span class="av">ຕທ</span><div><p style="font-size:1.8rem;font-weight:700" id="uname"></p><p class="lb" style="letter-spacing:0">ສະມາຊິກ</p></div><button class="btn b3" data-go="topup" style="margin-left:auto;height:3.4rem"><svg><use href="#i-wallet"/></svg><span id="ucredit"></span></button></div>
     <div class="card" style="padding:.6rem 1.6rem">
       <button class="row" data-go="keys"><span class="ico s3"><svg><use href="#i-key"/></svg></span>ລະຫັດໄລເຊັນຂອງຂ້ອຍ<svg><use href="#i-chev"/></svg></button>
       <button class="row" data-go="myorders"><span class="ico s2"><svg><use href="#i-boxes"/></svg></span>ປະຫວັດຄຳສັ່ງຊື້<svg><use href="#i-chev"/></svg></button>
@@ -2204,7 +2204,7 @@ $$('.nav .item').forEach(b=>b.addEventListener('click',()=>{
 
 /* ===== ข้อมูลตัวอย่าง (แทนที่ด้วยข้อมูลจริง / Supabase ภายหลัง) =====
    แต่ละรายการ = [ชื่อ, หมวด, ราคา, สต๊อก, URL รูป(ไม่ใส่ = ใช้ภาพปกไอคอน)] */
-const DEMO={user:'ຕົວແທນ #0019',credit:0}; /* ເຄຣດິດບໍ່ມີຄ່າຕັ້ງຕົ້ນອີກແລ້ວ: ຍອດຈິງມາຈາກຕາຕະລາງ wallets ຝັ່ງເຊີບເວີ (ແຍກຕາມບັນຊີ) */
+const DEMO={user:'ລູກຄ້າ #0019',credit:0}; /* ເຄຣດິດບໍ່ມີຄ່າຕັ້ງຕົ້ນອີກແລ້ວ: ຍອດຈິງມາຈາກຕາຕະລາງ wallets ຝັ່ງເຊີບເວີ (ແຍກຕາມບັນຊີ) */
 const UNL=9999; /* สินค้าที่สร้างใหม่ = ไม่จำกัดจำนวน */
 const P=[]; /* ไม่มีสินค้าตัวอย่างแล้ว — เพิ่มสินค้าจริงผ่านแท็บแอดมิน */
 const IC={'ໂປຣແກຣມ':'i-grid','ຫ້ອງການ':'i-boxes','ຄວາມປອດໄພ':'i-check','ເກມ':'i-bolt','IOS':'i-apple','ANDROID':'i-android'};
@@ -2268,7 +2268,7 @@ function paint(){
   /* ตัวเลขเครดิตหน้าแรก/หัวข้อ — ให้สำคัญสุด อัปเดตก่อนเสมอ แยก try/catch ของตัวเองไว้
      กันไม่ให้ element อื่นที่หายไป (เช่น #aName ตอนหน้า admin ยังไม่ mount) ทำให้บรรทัดนี้ไม่ทำงาน */
   try{setNum('#credit',DB.credit);$('#ucredit').textContent='₭'+fmt(DB.credit)}catch(e){console.error('อัปเดตเครดิตหลักผิดพลาด:',e)}
-  try{$('#storeName').textContent=DB.name;document.title=DB.name+' - ລະບົບຕົວແທນຈຳໜ່າຍ';$('#aName').value=DB.name}catch(e){}
+  try{$('#storeName').textContent=DB.name;document.title=DB.name+' - ຮ້ານຄ້າອອນລາຍ';$('#aName').value=DB.name}catch(e){}
   /* ซิงก์ยอดเครดิต/ออเดอร์/คีย์ในทุกหน้าให้เท่ากันทันที ไม่ต้องรอ setInterval 15 วิ (แก้ปัญหายอดเงินไม่หักในหน้าบัญชี/topup หลังซื้อ-เติมเงิน) */
   try{}catch(e){} try{renderMyKeys()}catch(e){} try{renderMyOrders()}catch(e){}
 }
@@ -3032,7 +3032,7 @@ function applyAdminVisibility(user,role){
   if(!isAdmin && $('#v-admin')?.classList.contains('on')) show('home');
   if(isAdmin&&typeof tpBadgeRefresh==='function') tpBadgeRefresh();
 }
-/* ---- ໜ້າຫຼັກ: 4 ກ່ອງສະຖິຕິ (ຕົວແທນ/ສິນຄ້າ/ລະຫັດ/ອໍເດີ) ດຶງຈາກເຊີບເວີຈິງ ---- */
+/* ---- ໜ້າຫຼັກ: 4 ກ່ອງສະຖິຕິ (ສະມາຊິກ/ສິນຄ້າ/ລະຫັດ/ອໍເດີ) ດຶງຈາກເຊີບເວີຈິງ ---- */
 let statsBusy=false;
 async function loadHomeStats(){
   if(statsBusy) return; statsBusy=true;
